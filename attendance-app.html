@@ -641,6 +641,23 @@
                 font-weight: 800;
             }
 
+            /* Pagination Toolbar Control Controls */
+            .pagination-bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 12px;
+                background: var(--bg-panel);
+                border-top: 1px solid var(--border-color);
+                font-size: 0.8rem;
+                border-radius: 0 0 var(--radius) var(--radius);
+            }
+            .pagination-controls {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
             /* Collapsible Readme Details Layout Block Styles */
             .readme-details {
                 border: 1px solid var(--border-color);
@@ -1108,8 +1125,7 @@
                 <div id="live-clock" class="clock-display">Loading system date and context time...</div>
                 <div class="marquee-wrapper">
                     <div class="marquee">
-                        WFM System Live Notice Log: Offline data isolation layer engaged. Storage updates reflect
-                        locally on this sandbox platform client context. Keep baseline exports backup secured routinely.
+                        WFM System Live Notice Log: IndexedDB storage engine active with offline fallback layer. Master data seamlessly integrated from repository masterfile.
                     </div>
                 </div>
             </footer>
@@ -1247,7 +1263,7 @@
                 <div class="modal-header">
                     <h3>
                         <i class="fa-solid fa-database" style="color: var(--accent-color)"></i> Central Master
-                        Transaction Ledger Database
+                        Transaction Ledger Database (IndexedDB)
                     </h3>
                     <button class="close-modal" onclick="toggleModal('history-modal')">&times;</button>
                 </div>
@@ -1332,7 +1348,7 @@
                             <i class="fa-solid fa-dumpster-fire"></i> Purge All Storage
                         </button>
                     </div>
-                    <div class="table-wrapper" id="master-table-wrapper" style="max-height: 55vh">
+                    <div class="table-wrapper" id="master-table-wrapper" style="max-height: 50vh">
                         <table>
                             <thead>
                                 <tr>
@@ -1345,6 +1361,28 @@
                             </thead>
                             <tbody id="master-modal-table-body"></tbody>
                         </table>
+                    </div>
+                    <!-- IndexedDB Paginated Footer Bar -->
+                    <div class="pagination-bar">
+                        <div id="pagination-info" style="color: var(--text-muted);">
+                            Showing 0 - 0 of 0 logs
+                        </div>
+                        <div class="pagination-controls">
+                            <label for="page-size-select" style="margin: 0; display: inline;">Rows per page:</label>
+                            <select id="page-size-select" onchange="changePageSize(this.value)" style="width: auto; padding: 2px 6px;">
+                                <option value="15">15</option>
+                                <option value="25" selected>25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <button onclick="navigatePage(-1)" id="btn-prev-page" disabled>
+                                <i class="fa-solid fa-chevron-left"></i> Prev
+                            </button>
+                            <span id="page-number-display" style="font-weight: 700; padding: 0 4px;">Page 1</span>
+                            <button onclick="navigatePage(1)" id="btn-next-page" disabled>
+                                Next <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1471,10 +1509,10 @@
                             <p>Keep these performance rules in mind during long-term tracking use:</p>
                             <ul>
                                 <li>
-                                    <i class="fa-solid fa-circle-info text-primary"></i> Data is stored offline in your browser session via <code>sessionStorage</code>.
+                                    <i class="fa-solid fa-database text-primary"></i> Data persistence utilizes asynchronous IndexedDB with automatic LocalStorage fallback to support high-volume paginated datasets.
                                 </li>
                                 <li>
-                                    <i class="fa-solid fa-triangle-exclamation text-warning"></i> Session storage holds data during hard reloads and refreshes. Perform regular data backups using the CSV Export button within the Master Logs module before ending your browser session.
+                                    <i class="fa-solid fa-cloud-arrow-down text-success"></i> Masterfile setup automatically attempts fetching <code>attendance-masterfile.csv</code> within the repository on startup.
                                 </li>
                             </ul>
                         </div>
@@ -1490,7 +1528,7 @@
                 // Date normalization utility converting MM/DD/YYYY or arbitrary strings to YYYY-MM-DD
                 function normalizeDateToISO(dateStr) {
                     if (!dateStr) return "";
-                    const trimmed = dateStr.trim();
+                    const trimmed = String(dateStr).trim();
                     if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
                     const parts = trimmed.split(/[\/\.-]/);
                     if (parts.length === 3) {
@@ -1509,12 +1547,159 @@
                     return trimmed;
                 }
 
-                // Global Operational Memory Collection State Variables (Session Storage implementation)
-                let database = (JSON.parse(sessionStorage.getItem("wfm_attendance_records")) || []).map((rec) => ({
-                    ...rec,
-                    date: normalizeDateToISO(rec.date)
-                }));
+                // Global Operational Memory Collection State Variables
+                let database = [];
                 let activeToastTimeout = null;
+
+                // Paginated Master Table State Variables
+                let currentPage = 1;
+                let pageSize = 25;
+                let masterFilteredLogs = [];
+
+                // IndexedDB Infrastructure Setup
+                const DB_NAME = "WFM_Attendance_DB";
+                const DB_VERSION = 1;
+                const STORE_NAME = "attendance_records";
+                let db = null;
+
+                function initIndexedDB() {
+                    return new Promise((resolve, reject) => {
+                        if (!window.indexedDB) {
+                            console.warn("IndexedDB not supported, using LocalStorage fallback.");
+                            resolve(null);
+                            return;
+                        }
+                        const request = indexedDB.open(DB_NAME, DB_VERSION);
+                        request.onerror = (e) => {
+                            console.error("IndexedDB error:", e);
+                            resolve(null);
+                        };
+                        request.onsuccess = (e) => {
+                            db = e.target.result;
+                            resolve(db);
+                        };
+                        request.onupgradeneeded = (e) => {
+                            const dbInstance = e.target.result;
+                            if (!dbInstance.objectStoreNames.contains(STORE_NAME)) {
+                                const store = dbInstance.createObjectStore(STORE_NAME, { keyPath: "uuid" });
+                                store.createIndex("date", "date", { unique: false });
+                                store.createIndex("empName", "empName", { unique: false });
+                            }
+                        };
+                    });
+                }
+
+                async function saveDatabaseToStorage() {
+                    if (db) {
+                        try {
+                            const tx = db.transaction(STORE_NAME, "readwrite");
+                            const store = tx.objectStore(STORE_NAME);
+                            await new Promise((resolve, reject) => {
+                                const clearReq = store.clear();
+                                clearReq.onsuccess = resolve;
+                                clearReq.onerror = reject;
+                            });
+                            for (const rec of database) {
+                                store.put(rec);
+                            }
+                        } catch (err) {
+                            console.error("Failed saving to IndexedDB, fallback to localStorage:", err);
+                            localStorage.setItem("wfm_attendance_records", JSON.stringify(database));
+                        }
+                    } else {
+                        localStorage.setItem("wfm_attendance_records", JSON.stringify(database));
+                    }
+                }
+
+                async function loadDatabaseFromStorage() {
+                    if (db) {
+                        try {
+                            return await new Promise((resolve, reject) => {
+                                const tx = db.transaction(STORE_NAME, "readonly");
+                                const store = tx.objectStore(STORE_NAME);
+                                const req = store.getAll();
+                                req.onsuccess = () => resolve(req.result || []);
+                                req.onerror = () => resolve([]);
+                            });
+                        } catch (err) {
+                            console.error("IndexedDB read error, falling back to localStorage:", err);
+                        }
+                    }
+                    // Fallback to localStorage or sessionStorage legacy
+                    const localData = localStorage.getItem("wfm_attendance_records") || sessionStorage.getItem("wfm_attendance_records");
+                    return localData ? JSON.parse(localData) : [];
+                }
+
+                // Default Fetch Masterfile CSV with Fallback
+                async function fetchDefaultMasterfileCSV() {
+                    const csvUrl = "./attendance-masterfile.csv";
+                    try {
+                        const response = await fetch(csvUrl);
+                        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                        const csvText = await response.text();
+                        parseAndIngestCSV(csvText);
+                        localStorage.setItem("cached_masterfile_csv", csvText);
+                        showToast("Loaded masterfile CSV from repository successfully.");
+                    } catch (error) {
+                        console.warn("Unable to fetch attendance-masterfile.csv from repo directly:", error);
+                        const cachedCSV = localStorage.getItem("cached_masterfile_csv");
+                        if (cachedCSV) {
+                            parseAndIngestCSV(cachedCSV);
+                            showToast("Loaded repository masterfile from offline LocalStorage cache.", "warning");
+                        }
+                    }
+                }
+
+                function parseAndIngestCSV(csvText) {
+                    const lines = csvText.split(/\r?\n/).filter((l) => l.trim() !== "");
+                    if (lines.length < 2) return;
+
+                    const parsedRecords = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        const cols = lines[i].split(",").map((c) => c.trim().replace(/^"|"$/g, ""));
+                        if (cols.length >= 2 && cols[0] && cols[1]) {
+                            const date = normalizeDateToISO(cols[0]);
+                            const empName = cols[1];
+                            const status = cols[2] || "Present";
+                            let metrics = {};
+                            const metricCol = cols[3] || "";
+                            const remarks = cols[4] || "";
+
+                            if (status === "Present") {
+                                const lateMatch = metricCol.match(/Tardiness:\s*(\d+)m/i);
+                                const obMatch = metricCol.match(/OB:\s*(\d+)m/i);
+                                metrics.lateMins = lateMatch ? parseInt(lateMatch[1]) : 0;
+                                metrics.obMins = obMatch ? parseInt(obMatch[1]) : 0;
+                            } else if (status === "Leave") {
+                                const leaveDaysMatch = metricCol.match(/\(\s*([\d\.]+)\s*d\s*\)/i);
+                                metrics.leaveType = metricCol.split("(")[0].trim() || "General";
+                                metrics.leaveDays = leaveDaysMatch ? parseFloat(leaveDaysMatch[1]) : 1;
+                            }
+
+                            parsedRecords.push({
+                                uuid: "id_" + Math.random().toString(36).substring(2, 9) + "_" + Date.now() + "_" + i,
+                                date,
+                                empName,
+                                status,
+                                metrics,
+                                remarks
+                            });
+                        }
+                    }
+
+                    if (parsedRecords.length > 0) {
+                        // Merge parsed records avoiding exact duplicate Date + Agent entries
+                        parsedRecords.forEach((newRec) => {
+                            const existingIdx = database.findIndex((r) => normalizeDateToISO(r.date) === newRec.date && r.empName === newRec.empName);
+                            if (existingIdx !== -1) {
+                                database[existingIdx] = newRec;
+                            } else {
+                                database.push(newRec);
+                            }
+                        });
+                        saveDatabaseToStorage();
+                    }
+                }
 
                 // Roster of agents referenced in tracking context
                 const agentPoolList = [
@@ -1538,11 +1723,21 @@
                 ];
 
                 // UI Initialization LifeCycle Hooks
-                document.addEventListener("DOMContentLoaded", () => {
+                document.addEventListener("DOMContentLoaded", async () => {
                     initTheme();
                     initClock();
                     initFontSize();
                     initDragAndDrop();
+
+                    await initIndexedDB();
+                    const storedRecords = await loadDatabaseFromStorage();
+                    database = storedRecords.map((rec) => ({
+                        ...rec,
+                        date: normalizeDateToISO(rec.date)
+                    }));
+
+                    // Automatically attempt fetching repository masterfile CSV on launch
+                    await fetchDefaultMasterfileCSV();
 
                     // Set tracking date picker value to the newest record in dataset, or fallback to today's ISO date
                     let initialDate = new Date().toISOString().split("T")[0];
@@ -1648,6 +1843,20 @@
                     });
                 }
 
+                window.executeCSVFileReaderPipeline = function(file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const content = e.target.result;
+                        parseAndIngestCSV(content);
+                        refreshDashboardUI();
+                        if (document.getElementById("history-modal").classList.contains("active")) {
+                            renderMasterLedgerTable();
+                        }
+                        showToast("Bulk CSV database import processed successfully.");
+                    };
+                    reader.readAsText(file);
+                };
+
                 // Dynamic Modal Control Portal Hooks
                 window.toggleModal = function (modalId) {
                     const modal = document.getElementById(modalId);
@@ -1657,6 +1866,133 @@
                         if (modalId === "analytics-modal") compilePerformanceAnalytics();
                         if (modalId === "trend-monitor-modal") compileAgentTrendMonitor();
                         if (modalId === "compliance-notifier-modal") compileComplianceNotifier();
+                    }
+                };
+
+                // Master Ledger Search & Paginated Rendering Utilities
+                window.filterMasterLedgerGrid = function() {
+                    currentPage = 1;
+                    renderMasterLedgerTable();
+                };
+
+                window.changePageSize = function(val) {
+                    pageSize = parseInt(val) || 25;
+                    currentPage = 1;
+                    renderMasterLedgerTable();
+                };
+
+                window.navigatePage = function(direction) {
+                    currentPage += direction;
+                    renderMasterLedgerTable();
+                };
+
+                function renderMasterLedgerTable() {
+                    const searchTerm = (document.getElementById("master-excel-search").value || "").toLowerCase().trim();
+                    
+                    masterFilteredLogs = database.filter((rec) => {
+                        if (!searchTerm) return true;
+                        const dateMatch = rec.date.toLowerCase().includes(searchTerm);
+                        const nameMatch = rec.empName.toLowerCase().includes(searchTerm);
+                        const statusMatch = rec.status.toLowerCase().includes(searchTerm);
+                        const remarksMatch = (rec.remarks || "").toLowerCase().includes(searchTerm);
+                        return dateMatch || nameMatch || statusMatch || remarksMatch;
+                    });
+
+                    // Sort master logs descending by date
+                    masterFilteredLogs.sort((a, b) => b.date.localeCompare(a.date));
+
+                    const totalItems = masterFilteredLogs.length;
+                    const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+                    if (currentPage > totalPages) currentPage = totalPages;
+                    if (currentPage < 1) currentPage = 1;
+
+                    const startIndex = (currentPage - 1) * pageSize;
+                    const endIndex = Math.min(startIndex + pageSize, totalItems);
+                    const pageRecords = masterFilteredLogs.slice(startIndex, endIndex);
+
+                    const tbody = document.getElementById("master-modal-table-body");
+                    tbody.innerHTML = "";
+
+                    if (pageRecords.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">No master records matched the given criteria.</td></tr>`;
+                    } else {
+                        pageRecords.forEach((rec) => {
+                            let dynamicMetricLayout = "";
+                            if (rec.status === "Present") {
+                                dynamicMetricLayout = `Tardiness: ${rec.metrics?.lateMins || 0}m | OB: ${rec.metrics?.obMins || 0}m`;
+                            } else if (rec.status === "Leave") {
+                                dynamicMetricLayout = `${rec.metrics?.leaveType || "General"} ( ${rec.metrics?.leaveDays || 1} d )`;
+                            } else if (rec.status === "Rest Day") {
+                                dynamicMetricLayout = "Off Day";
+                            } else {
+                                dynamicMetricLayout = "LWOP Active";
+                            }
+
+                            const badgeClassName = rec.status === "Rest Day" ? "restday" : rec.status.toLowerCase();
+
+                            const tr = document.createElement("tr");
+                            tr.innerHTML = `
+                                <td><strong>${rec.date}</strong></td>
+                                <td><strong>${rec.empName}</strong></td>
+                                <td><span class="badge-ui ${badgeClassName}">${rec.status}</span></td>
+                                <td>${dynamicMetricLayout}</td>
+                                <td>${rec.remarks || "-"}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+
+                    // Update Pagination UI Bar controls
+                    const infoElem = document.getElementById("pagination-info");
+                    infoElem.textContent = totalItems > 0 
+                        ? `Showing ${startIndex + 1} - ${endIndex} of ${totalItems} logs`
+                        : "Showing 0 - 0 of 0 logs";
+
+                    document.getElementById("page-number-display").textContent = `Page ${currentPage} of ${totalPages}`;
+                    document.getElementById("btn-prev-page").disabled = currentPage <= 1;
+                    document.getElementById("btn-next-page").disabled = currentPage >= totalPages;
+                }
+
+                // Export Database to CSV File Helper
+                window.exportToCSV = function() {
+                    if (database.length === 0) {
+                        showToast("No records available in storage to export.", "warning");
+                        return;
+                    }
+                    let csvContent = "data:text/csv;charset=utf-8,Date,Agent Name,Status,Metrics Summary,Remarks\n";
+                    database.forEach((rec) => {
+                        let metricStr = "";
+                        if (rec.status === "Present") {
+                            metricStr = `Tardiness: ${rec.metrics?.lateMins || 0}m | OB: ${rec.metrics?.obMins || 0}m`;
+                        } else if (rec.status === "Leave") {
+                            metricStr = `${rec.metrics?.leaveType || "General"} (${rec.metrics?.leaveDays || 1} d)`;
+                        } else {
+                            metricStr = rec.status;
+                        }
+                        const cleanRemarks = (rec.remarks || "").replace(/"/g, '""');
+                        csvContent += `"${rec.date}","${rec.empName}","${rec.status}","${metricStr}","${cleanRemarks}"\n`;
+                    });
+
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", `attendance_master_ledger_${new Date().toISOString().split("T")[0]}.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    showToast("Master ledger successfully exported to CSV.");
+                };
+
+                // Purge / Wipe All Storage Databases
+                window.wipeDatabase = function() {
+                    if (confirm("Are you sure you want to permanently clear all stored attendance records?")) {
+                        database = [];
+                        saveDatabaseToStorage();
+                        localStorage.removeItem("wfm_attendance_records");
+                        sessionStorage.removeItem("wfm_attendance_records");
+                        refreshDashboardUI();
+                        renderMasterLedgerTable();
+                        showToast("All storage records purged.", "error");
                     }
                 };
 
@@ -1750,7 +2086,7 @@
                     });
 
                     if (addedCount > 0) {
-                        sessionStorage.setItem("wfm_attendance_records", JSON.stringify(database));
+                        saveDatabaseToStorage();
                         showToast(`Successfully logged ${addedCount} agent(s) as Present for ${targetDate}.`);
                         refreshDashboardUI();
                     } else {
@@ -1784,7 +2120,7 @@
                     });
 
                     if (addedCount > 0) {
-                        sessionStorage.setItem("wfm_attendance_records", JSON.stringify(database));
+                        saveDatabaseToStorage();
                         showToast(`Successfully logged ${addedCount} agent(s) as Rest Day for ${targetDate}.`);
                         refreshDashboardUI();
                     } else {
@@ -1811,7 +2147,7 @@
                     const recordIdentityUUID = "id_" + Math.random().toString(36).substring(2, 9) + "_" + Date.now();
                     database.push({ uuid: recordIdentityUUID, ...entryData });
 
-                    sessionStorage.setItem("wfm_attendance_records", JSON.stringify(database));
+                    saveDatabaseToStorage();
                     showToast("Attendance transaction record initialized.");
                     clearForm();
                     refreshDashboardUI();
@@ -1828,7 +2164,7 @@
                     if (indexPosition !== -1) {
                         database[indexPosition] = { uuid, ...entryData };
                         showToast("Transaction parameters updated successfully.");
-                        sessionStorage.setItem("wfm_attendance_records", JSON.stringify(database));
+                        saveDatabaseToStorage();
                         clearForm();
                         refreshDashboardUI();
                     } else {
@@ -1844,7 +2180,7 @@
                     database = database.filter((rec) => rec.uuid !== uuid);
 
                     if (database.length < beforeLength) {
-                        sessionStorage.setItem("wfm_attendance_records", JSON.stringify(database));
+                        saveDatabaseToStorage();
                         showToast("Transaction sequence permanently extracted from ledger log history.");
                         clearForm();
                         refreshDashboardUI();
@@ -2146,316 +2482,33 @@
 
                     document.getElementById("remarks").value = target.remarks || "";
 
-                    // Lock down transactional operation state switches
                     document.getElementById("btn-save").disabled = true;
                     document.getElementById("btn-update").disabled = false;
                     document.getElementById("btn-delete").disabled = false;
-
-                    // Close down standard active portals overlay layer to display inputs instantly
-                    document.getElementById("history-modal").classList.remove("active");
                 };
 
-                // Engine Configuration: Modal View 4 (Master Ledger System Rendering Panel)
-                function renderMasterLedgerTable() {
-                    const masterBody = document.getElementById("master-modal-table-body");
-                    masterBody.innerHTML = "";
-
-                    if (database.length === 0) {
-                        masterBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">Offline ledger logs cache is currently clean. Data logs display here upon storage cache inputs.</td></tr>`;
-                        return;
-                    }
-
-                    // Sort records chronologically descending
-                    const sortedLogCollection = [...database].sort((x, y) => new Date(y.date) - new Date(x.date));
-
-                    sortedLogCollection.forEach((log) => {
-                        let metricString = "";
-                        if (log.status === "Present") {
-                            metricString = `Tardiness: ${log.metrics.lateMins || 0}m, OB: ${log.metrics.obMins || 0}m`;
-                        } else if (log.status === "Leave") {
-                            metricString = `${log.metrics.leaveType} [${log.metrics.leaveDays} Day(s)]`;
-                        } else if (log.status === "Rest Day") {
-                            metricString = "Off Day";
-                        } else if (log.status === "Absent") {
-                            metricString = "LWOP Active";
-                        } else {
-                            metricString = "N/A";
+                // Keyboard Shortcuts Framework
+                document.addEventListener("keydown", (e) => {
+                    if (e.altKey) {
+                        if (e.key === "1") {
+                            e.preventDefault();
+                            toggleStatusFields("Present");
+                        } else if (e.key === "2") {
+                            e.preventDefault();
+                            toggleStatusFields("Leave");
+                        } else if (e.key === "3") {
+                            e.preventDefault();
+                            toggleStatusFields("Absent");
+                        } else if (e.key === "4" || e.key === "5") {
+                            e.preventDefault();
+                            toggleStatusFields("Rest Day");
+                        } else if (e.key.toLowerCase() === "s") {
+                            e.preventDefault();
+                            if (!document.getElementById("btn-save").disabled) commitNewEntry();
+                        } else if (e.key.toLowerCase() === "z") {
+                            e.preventDefault();
+                            if (!document.getElementById("btn-update").disabled) updateExistingEntry();
                         }
-
-                        const badgeClassName = log.status === "Rest Day" ? "restday" : log.status.toLowerCase();
-                        const row = document.createElement("tr");
-
-                        const isoDate = normalizeDateToISO(log.date);
-                        row.setAttribute("data-agent", log.empName.toLowerCase());
-                        row.setAttribute("data-status", log.status.toLowerCase());
-                        row.setAttribute("data-date", isoDate.toLowerCase());
-                        row.setAttribute("data-metrics", metricString.toLowerCase());
-                        row.setAttribute("data-remarks", (log.remarks || "").toLowerCase());
-
-                        row.innerHTML = `
-                            <td><span style="font-family: monospace;">${isoDate}</span></td>
-                            <td><strong>${log.empName}</strong></td>
-                            <td><span class="badge-ui ${badgeClassName}">${log.status}</span></td>
-                            <td><small>${metricString}</small></td>
-                            <td><span style="font-size:0.75rem; color:var(--text-muted);">${log.remarks || "—"}</span></td>
-                        `;
-
-                        row.style.cursor = "pointer";
-                        row.title = "Double click row item line to pull into core editor workspace";
-                        row.ondblclick = () => loadEntryToForm(log.uuid);
-
-                        masterBody.appendChild(row);
-                    });
-
-                    filterMasterLedgerGrid();
-                }
-
-                // Excel-Like Multi-Field Filter Routine Function
-                window.filterMasterLedgerGrid = function () {
-                    const searchInput = document.getElementById("master-excel-search");
-                    if (!searchInput) return;
-
-                    const term = searchInput.value.trim().toLowerCase();
-                    const masterBody = document.getElementById("master-modal-table-body");
-                    const rows = masterBody.getElementsByTagName("tr");
-
-                    if (rows.length === 1 && rows[0].cells.length === 1) return;
-
-                    for (let i = 0; i < rows.length; i++) {
-                        const targetRow = rows[i];
-
-                        const agentAttr = targetRow.getAttribute("data-agent") || "";
-                        const statusAttr = targetRow.getAttribute("data-status") || "";
-                        const dateAttr = targetRow.getAttribute("data-date") || "";
-                        const metricsAttr = targetRow.getAttribute("data-metrics") || "";
-                        const remarksAttr = targetRow.getAttribute("data-remarks") || "";
-
-                        if (
-                            agentAttr.includes(term) ||
-                            statusAttr.includes(term) ||
-                            dateAttr.includes(term) ||
-                            metricsAttr.includes(term) ||
-                            remarksAttr.includes(term)
-                        ) {
-                            targetRow.style.display = "";
-                        } else {
-                            targetRow.style.display = "none";
-                        }
-                    }
-                };
-
-                // Auto-Reset Search Text Input when opening the Master View Modal
-                const originalToggleModal = window.toggleModal;
-                window.toggleModal = function (modalId) {
-                    if (modalId === "history-modal") {
-                        const searchInput = document.getElementById("master-excel-search");
-                        if (searchInput) searchInput.value = "";
-                    }
-                    if (originalToggleModal) originalToggleModal(modalId);
-                };
-
-                // Export to Compliant Standard CSV Database System
-                window.exportToCSV = function () {
-                    if (database.length === 0) {
-                        showToast(
-                            "No structured database values found to compile an export spreadsheet output.",
-                            "error"
-                        );
-                        return;
-                    }
-
-                    let csvPayload =
-                        "Date,Agent Name,Attendance Status,Tardiness Minutes,Overbreaks Minutes,Leave Type,Leave Days,Remarks\r\n";
-                    database.forEach((item) => {
-                        const late = item.status === "Present" ? item.metrics.lateMins || 0 : 0;
-                        const ob = item.status === "Present" ? item.metrics.obMins || 0 : 0;
-                        let lType = "";
-
-                        if (item.status === "Present") lType = `"Present"`;
-                        else if (item.status === "Absent") lType = `"LWOP Active"`;
-                        else if (item.status === "Rest Day") lType = `"Off Day"`;
-                        else if (item.status === "Leave") lType = `"${item.metrics.leaveType || ""}"`;
-
-                        const lDays = item.status === "Leave" ? item.metrics.leaveDays || 0 : 0;
-                        const remStr = item.remarks ? `"${item.remarks.replace(/"/g, '""')}"` : '""';
-                        const isoDate = normalizeDateToISO(item.date);
-
-                        csvPayload += `${isoDate},"${item.empName}",${item.status},${late},${ob},${lType},${lDays},${remStr}\r\n`;
-                    });
-
-                    const blob = new Blob([csvPayload], { type: "text/csv;charset=utf-8;" });
-                    const downloadLink = document.createElement("a");
-                    downloadLink.href = URL.createObjectURL(blob);
-                    downloadLink.setAttribute(
-                        "download",
-                        `attendance-masterfile_${new Date().toISOString().split("T")[0]}.csv`
-                    );
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-                    showToast("Ledger data compiled into a local backup CSV spreadsheet successfully.");
-                };
-
-                // CSV Raw Pipeline Parser Converter
-                window.executeCSVFileReaderPipeline = function (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const rawLines = e.target.result.split(/\r?\n/);
-                        let validParsedCount = 0;
-
-                        for (let index = 1; index < rawLines.length; index++) {
-                            const currentLine = rawLines[index].trim();
-                            if (!currentLine) continue;
-
-                            const parts = currentLine.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                            if (parts.length >= 3) {
-                                const rawDate = parts[0].trim();
-                                const date = normalizeDateToISO(rawDate);
-                                const empName = parts[1].replace(/^"|"$/g, "").trim();
-                                const status = parts[2].trim();
-
-                                if (!date || !empName || !["Present", "Leave", "Absent", "Rest Day"].includes(status))
-                                    continue;
-
-                                let metrics = {};
-                                if (status === "Present") {
-                                    metrics.lateMins = parseInt(parts[3]) || 0;
-                                    metrics.obMins = parseInt(parts[4]) || 0;
-                                } else if (status === "Leave") {
-                                    metrics.leaveType = parts[5] ? parts[5].replace(/^"|"$/g, "") : "Sick leave";
-                                    metrics.leaveDays = parseFloat(parts[6]) || 1;
-                                }
-
-                                const remarks = parts[7] ? parts[7].replace(/^"|"$/g, "") : "";
-
-                                if (!database.some((rec) => normalizeDateToISO(rec.date) === date && rec.empName === empName)) {
-                                    database.push({
-                                        uuid: "id_" + Math.random().toString(36).substring(2, 9) + "_" + Date.now(),
-                                        date,
-                                        empName,
-                                        status,
-                                        metrics,
-                                        remarks,
-                                    });
-                                    validParsedCount++;
-                                }
-                            }
-                        }
-
-                        sessionStorage.setItem("wfm_attendance_records", JSON.stringify(database));
-
-                        // Set default picker value to the imported batch date if available
-                        if (database.length > 0) {
-                            const sortedDates = [...database].map((r) => r.date).sort((a, b) => b.localeCompare(a));
-                            if (sortedDates[0]) {
-                                document.getElementById("record-date").value = sortedDates[0];
-                            }
-                        }
-
-                        showToast(`Import parsing operation concluded. Imported ${validParsedCount} records.`);
-                        refreshDashboardUI();
-                        renderMasterLedgerTable();
-                    };
-                    reader.readAsText(file);
-                };
-
-                // Total Clear-Down Execution
-                window.wipeDatabase = function () {
-                    const verificationTokenKey = Math.floor(1000 + Math.random() * 9000);
-                    const portal = document.getElementById("dynamic-modal-portal");
-
-                    portal.innerHTML = `
-						<div class="modal-overlay active" id="purge-auth-modal" style="z-index: 1010;">
-							<div class="modal-content" style="max-width: 420px; position: relative;">
-								<div class="modal-header" style="border-bottom-color: var(--danger);">
-									<h3><i class="fa-solid fa-shield-halved" style="color: var(--danger);"></i> Security Authentication</h3>
-									<button class="close-modal" onclick="window.closePurgeModal()">&times;</button>
-								</div>
-								<div class="modal-body" id="purge-modal-body" style="display: flex; flex-direction: column; gap: 12px;">
-									<p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
-										CRITICAL INSTRUCTION: You are requesting a structural clear-down purge of all records from session storage.
-									</p>
-									<div style="background: var(--bg-input); padding: 6px; text-align: center; border-radius: var(--radius); border: 1px solid var(--border-color); font-weight: 700; font-family: monospace; letter-spacing: 2px;">
-										Verification Passphrase: <span style="color: var(--danger); font-size: 1.1rem;">${verificationTokenKey}</span>
-									</div>
-									<div>
-										<label for="purge-password-input">Input Verification Token Passphrase *</label>
-										<input type="text" id="purge-password-input" autocomplete="off" placeholder="Type key here..." style="text-align: center;" />
-									</div>
-									<div style="display: flex; justify-content: center; gap: 8px; margin-top: 6px;">
-										<button type="button" id="btn-purge-abort" onclick="window.closePurgeModal()" style="padding: 6px 16px; font-weight: 600;">Cancel</button>
-										<button type="button" class="danger" onclick="window.verifyPurgeAuthorizationKey(${verificationTokenKey})" style="padding: 6px 16px; font-weight: 600;">Proceed</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					`;
-                    document.getElementById("btn-purge-abort").focus();
-                };
-
-                window.closePurgeModal = function () {
-                    document.getElementById("purge-auth-modal")?.remove();
-                };
-
-                window.verifyPurgeAuthorizationKey = function (expectedKey) {
-                    const input = document.getElementById("purge-password-input").value.trim();
-                    if (parseInt(input) === expectedKey) {
-                        database = [];
-                        sessionStorage.removeItem("wfm_attendance_records");
-                        window.closePurgeModal();
-                        clearForm();
-                        if (document.getElementById("history-modal").classList.contains("active")) {
-                            toggleModal("history-modal");
-                        }
-                        refreshDashboardUI();
-                        showToast("Session database data wiped out.", "error");
-                    } else {
-                        showToast(
-                            "Access Denied: Invalid security key or code entered. Purging records is cancelled.",
-                            "error"
-                        );
-                        window.closePurgeModal();
-                    }
-                };
-
-                // Hotkey listener for status selectors, Save (Alt + S), and Update (Alt + Z)
-                window.addEventListener("keydown", function (event) {
-                    const isCtrl = event.ctrlKey || event.metaKey;
-                    const isAlt = event.altKey;
-                    const key = event.key.toLowerCase();
-
-                    // Status selector shortcuts (Alt + 1 to 5)
-                    if (isAlt && (key === "1" || key === "2" || key === "3" || key === "4" || key === "5")) {
-                        event.preventDefault();
-                        if (key === "1") toggleStatusFields("Present");
-                        if (key === "2") toggleStatusFields("Leave");
-                        if (key === "3") toggleStatusFields("Absent");
-                        if (key === "4" || key === "5") toggleStatusFields("Rest Day");
-                        return false;
-                    }
-
-                    // Save Shortcut: Alt + S
-                    if (isAlt && key === "s") {
-                        event.preventDefault();
-                        const saveBtn = document.getElementById("btn-save");
-                        if (saveBtn && !saveBtn.disabled) {
-                            window.commitNewEntry();
-                        } else {
-                            showToast("Save transaction is currently unavailable.", "warning");
-                        }
-                        return false;
-                    }
-
-                    // Update Shortcut: Alt + Z
-                    if (isAlt && key === "z") {
-                        event.preventDefault();
-                        const updateBtn = document.getElementById("btn-update");
-                        if (updateBtn && !updateBtn.disabled) {
-                            window.updateExistingEntry();
-                        } else {
-                            showToast("Update transaction is currently unavailable.", "warning");
-                        }
-                        return false;
                     }
                 });
             })();
