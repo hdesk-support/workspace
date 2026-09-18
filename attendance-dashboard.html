@@ -13,9 +13,6 @@
         <link rel="shortcut icon" href="https://img.icons8.com/?size=100&id=23195&format=png&color=40C057" />
 
         <style>
-            /* =========================================
-           CSS VARIABLES (THEMING & GLOBAL)
-           ========================================= */
             :root {
                 --bg-body: #121212;
                 --bg-panel: #1e1e1e;
@@ -46,19 +43,8 @@
                 --purple: #6b21a8;
             }
 
-            /* =========================================
-           GLOBAL ELEMENT STYLES
-           ========================================= */
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-            }
-
-            html {
-                font-size: var(--base-font-size);
-            }
-
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            html { font-size: var(--base-font-size); }
             body {
                 font-family: "Plus Jakarta Sans", "Segoe UI", Tahoma, sans-serif;
                 background-color: var(--bg-body);
@@ -83,12 +69,8 @@
                 height: calc(100vh - 35px);
             }
 
-            h2, h3, h4 {
-                color: var(--text-main);
-                font-weight: 600;
-            }
+            h2, h3, h4 { color: var(--text-main); font-weight: 600; }
 
-            /* Buttons */
             button, .file-upload-btn {
                 background-color: var(--bg-input);
                 color: var(--text-main);
@@ -104,22 +86,14 @@
                 font-weight: 500;
                 text-decoration: none;
             }
-            button:hover, .file-upload-btn:hover {
-                background-color: var(--border-color);
-            }
+            button:hover, .file-upload-btn:hover { background-color: var(--border-color); }
             button.primary, .file-upload-btn.primary {
                 background-color: var(--accent-color);
                 color: #fff;
                 border-color: var(--accent-color);
             }
-            button.primary:hover, .file-upload-btn.primary:hover {
-                background-color: var(--accent-hover);
-            }
-            button.warning {
-                background-color: var(--warning);
-                color: #fff;
-                border-color: var(--warning);
-            }
+            button.primary:hover, .file-upload-btn.primary:hover { background-color: var(--accent-hover); }
+            button.warning { background-color: var(--warning); color: #fff; border-color: var(--warning); }
 
             input {
                 width: 100%;
@@ -138,7 +112,6 @@
                 box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
             }
 
-            /* Layout Panels */
             .panel {
                 background-color: var(--bg-panel);
                 border-radius: var(--radius);
@@ -147,9 +120,6 @@
                 border: 1px solid var(--border-color);
             }
 
-            /* =========================================
-           HEADER SECTION
-           ========================================= */
             header {
                 display: flex;
                 justify-content: space-between;
@@ -159,11 +129,7 @@
                 gap: 10px;
                 flex-wrap: wrap;
             }
-            .brand-box {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
+            .brand-box { display: flex; align-items: center; gap: 10px; }
             .brand-logo {
                 background: linear-gradient(135deg, #0284c7, #0369a1);
                 color: white;
@@ -176,43 +142,18 @@
                 font-size: 1.3rem;
                 box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
             }
-            .brand h1 {
-                font-size: 1.15rem;
-                font-weight: 800;
-                letter-spacing: 0.5px;
-            }
-            .brand p {
-                font-size: 0.65rem;
-                color: var(--text-muted);
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-            }
-            .global-controls {
-                display: flex;
-                gap: 6px;
-                align-items: center;
-                flex-wrap: wrap;
-            }
+            .brand h1 { font-size: 1.15rem; font-weight: 800; letter-spacing: 0.5px; }
+            .brand p { font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+            .global-controls { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 
-            /* =========================================
-           INFOGRAPHICS & DASHBOARD METRICS
-           ========================================= */
             .dashboard-grid {
                 display: grid;
                 grid-template-columns: repeat(7, 1fr);
                 gap: 6px;
             }
-            @media (max-width: 1200px) {
-                .dashboard-grid {
-                    grid-template-columns: repeat(3, 1fr);
-                }
-            }
-            @media (max-width: 768px) {
-                .dashboard-grid {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-            }
+            @media (max-width: 1200px) { .dashboard-grid { grid-template-columns: repeat(3, 1fr); } }
+            @media (max-width: 768px) { .dashboard-grid { grid-template-columns: repeat(2, 1fr); } }
+            
             .kpi-card {
                 background: var(--bg-panel);
                 border: 1px solid var(--border-color);
@@ -227,10 +168,8 @@
             .kpi-card::before {
                 content: "";
                 position: absolute;
-                top: 0;
-                left: 0;
-                width: 4px;
-                height: 100%;
+                top: 0; left: 0;
+                width: 4px; height: 100%;
                 background: var(--accent-color);
             }
             .kpi-card.success::before { background: var(--success); }
@@ -241,38 +180,15 @@
             .kpi-icon {
                 font-size: 1.25rem;
                 color: var(--text-muted);
-                width: 32px;
-                height: 32px;
+                width: 32px; height: 32px;
                 background: var(--bg-input);
                 border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                display: flex; align-items: center; justify-content: center;
             }
-            .kpi-data {
-                flex: 1;
-                min-width: 0;
-            }
-            .kpi-value {
-                font-size: 1.25rem;
-                font-weight: 800;
-                line-height: 1.1;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-            .kpi-card .kpi-label {
-                font-size: 0.65rem;
-                color: var(--text-muted);
-                text-transform: uppercase;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
+            .kpi-data { flex: 1; min-width: 0; }
+            .kpi-value { font-size: 1.25rem; font-weight: 800; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .kpi-card .kpi-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-            /* Visual Chart Bar Components */
             .chart-panel {
                 display: grid;
                 grid-template-columns: 2fr 1fr;
@@ -291,33 +207,13 @@
             .progress-segment {
                 height: 100%;
                 transition: width 0.3s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 0.7rem;
-                font-weight: bold;
+                display: flex; align-items: center; justify-content: center;
+                color: white; font-size: 0.7rem; font-weight: bold;
             }
 
-            /* =========================================
-           CORE DISPLAY WORKSPACE (MAXIMIZED VIEW)
-           ========================================= */
-            .workspace-layout {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 8px;
-                flex: 1;
-                min-height: 0;
-            }
-            .workspace-layout .panel {
-                display: flex;
-                flex-direction: column;
-                min-height: 0;
-            }
+            .workspace-layout { display: grid; grid-template-columns: 1fr; gap: 8px; flex: 1; min-height: 0; }
+            .workspace-layout .panel { display: flex; flex-direction: column; min-height: 0; }
 
-            /* =========================================
-           TABLES & PREVIEW DATA MODULES
-           ========================================= */
             .table-wrapper {
                 flex: 1;
                 overflow-y: auto;
@@ -326,226 +222,55 @@
                 background: var(--bg-panel);
                 transition: var(--transition);
             }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                font-size: 0.8rem;
-                text-align: left;
-            }
-            th, td {
-                padding: 6px 8px;
-                border-bottom: 1px solid var(--border-color);
-            }
-            th {
-                background-color: var(--bg-input);
-                font-weight: 600;
-                position: sticky;
-                top: 0;
-                z-index: 10;
-            }
-            tbody tr:hover {
-                background-color: rgba(255, 255, 255, 0.01);
-            }
-            [data-theme="light"] tbody tr:hover {
-                background-color: rgba(0, 0, 0, 0.01);
-            }
-            .badge-ui {
-                display: inline-block;
-                padding: 1px 5px;
-                border-radius: 4px;
-                font-size: 0.7rem;
-                font-weight: bold;
-                text-transform: uppercase;
-            }
+            table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; }
+            th, td { padding: 6px 8px; border-bottom: 1px solid var(--border-color); }
+            th { background-color: var(--bg-input); font-weight: 600; position: sticky; top: 0; z-index: 10; }
+            tbody tr:hover { background-color: rgba(255, 255, 255, 0.01); }
+            [data-theme="light"] tbody tr:hover { background-color: rgba(0, 0, 0, 0.01); }
+            
+            .badge-ui { display: inline-block; padding: 1px 5px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
             .badge-ui.present { background: rgba(46, 204, 113, 0.2); color: var(--success); }
             .badge-ui.leave { background: rgba(241, 196, 15, 0.2); color: var(--warning); }
             .badge-ui.absent { background: rgba(231, 76, 60, 0.2); color: var(--danger); }
             .badge-ui.restday { background: rgba(155, 89, 182, 0.2); color: var(--purple); }
 
-            /* =========================================
-           MODALS OVERLAYS & PORTALS
-           ========================================= */
             .modal-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.65);
-                display: none;
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.65); display: none;
+                justify-content: center; align-items: center; z-index: 1000;
                 backdrop-filter: blur(3px);
             }
             .modal-overlay.active { display: flex; }
             .modal-content {
-                background: var(--bg-body);
-                width: 92%;
-                max-width: 1000px;
-                max-height: 85vh;
-                border-radius: var(--radius);
-                display: flex;
-                flex-direction: column;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-                border: 1px solid var(--border-color);
+                background: var(--bg-body); width: 92%; max-width: 1000px; max-height: 85vh;
+                border-radius: var(--radius); display: flex; flex-direction: column;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); border: 1px solid var(--border-color);
             }
-            .modal-header {
-                padding: 10px 14px;
-                border-bottom: 1px solid var(--border-color);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background: var(--bg-panel);
-            }
-            .modal-body {
-                padding: 14px;
-                overflow-y: auto;
-                flex: 1;
-            }
-            .close-modal {
-                background: none;
-                border: none;
-                font-size: 1.3rem;
-                color: var(--text-muted);
-                cursor: pointer;
-            }
+            .modal-header { padding: 10px 14px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); }
+            .modal-body { padding: 14px; overflow-y: auto; flex: 1; }
+            .close-modal { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
             .close-modal:hover { color: var(--danger); }
 
-            /* Analytics UI Layout Blocks */
-            .analytics-summary-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
-                margin-bottom: 14px;
-            }
-            .stat-box {
-                background: var(--bg-input);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius);
-                padding: 10px;
-            }
-            .stat-box-title {
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                text-transform: uppercase;
-                font-weight: 700;
-                margin-bottom: 4px;
-            }
-            .stat-box-value { font-size: 1.5rem; font-weight: 800; }
-
-            /* Collapsible Readme Details Layout Block Styles */
-            .readme-details {
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius);
-                margin-bottom: 8px;
-                background: var(--bg-panel);
-                overflow: hidden;
-            }
-            .readme-summary {
-                padding: 8px 12px;
-                font-weight: 600;
-                font-size: 0.85rem;
-                cursor: pointer;
-                background: var(--bg-input);
-                color: var(--text-main);
-                user-select: none;
-                outline: none;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            .readme-summary::before {
-                content: "\f0da";
-                font-family: "Font Awesome 6 Free";
-                font-weight: 900;
-                transition: transform 0.2s ease;
-                display: inline-block;
-                width: 12px;
-            }
-            .readme-details[open] .readme-summary::before { transform: rotate(90deg); }
-            .readme-content {
-                padding: 10px 14px 4px 14px;
-                font-size: 0.8rem;
-                line-height: 1.45;
-                color: var(--text-main);
-            }
-            .readme-highlight { color: var(--accent-color); font-weight: 600; }
-
-            /* Excel Search Bar Elements Extension Styles */
             .excel-search-bar-container {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                background: var(--bg-input);
-                border: 1px solid var(--border-color);
-                padding: 6px 10px;
-                border-radius: var(--radius);
-                margin-bottom: 10px;
-                box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+                display: flex; align-items: center; gap: 8px;
+                background: var(--bg-input); border: 1px solid var(--border-color);
+                padding: 6px 10px; border-radius: var(--radius); margin-bottom: 10px;
             }
             .excel-search-bar-container i { color: var(--text-muted); font-size: 0.9rem; }
-            .excel-search-bar-container input {
-                border: none !important;
-                background: transparent !important;
-                padding: 2px 0px !important;
-                font-size: 0.85rem;
-                box-shadow: none !important;
-                width: 100%;
-                color: var(--text-main);
-            }
+            .excel-search-bar-container input { border: none !important; background: transparent !important; padding: 2px 0px !important; font-size: 0.85rem; box-shadow: none !important; width: 100%; color: var(--text-main); }
 
-            /* =========================================
-           FOOTER ANNOUNCEMENTS MARQUEE
-           ========================================= */
             footer {
                 background-color: var(--bg-panel);
                 border-top: 1px solid var(--border-color);
-                padding: 4px 12px;
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                font-size: 0.75rem;
-                height: 26px;
+                padding: 4px 12px; display: flex; align-items: center; gap: 15px;
+                font-size: 0.75rem; height: 26px;
             }
-            .marquee-wrapper {
-                flex: 1;
-                overflow: hidden;
-                white-space: nowrap;
-                border-left: 2px solid var(--accent-color);
-                padding-left: 10px;
-            }
-            .marquee {
-                display: inline-block;
-                animation: scroll-text 30s linear infinite;
-            }
-            @keyframes scroll-text {
-                0% { transform: translateX(100%); }
-                100% { transform: translateX(-100%); }
-            }
+            .marquee-wrapper { flex: 1; overflow: hidden; white-space: nowrap; border-left: 2px solid var(--accent-color); padding-left: 10px; }
+            .marquee { display: inline-block; animation: scroll-text 30s linear infinite; }
+            @keyframes scroll-text { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-            #toast-container {
-                position: fixed;
-                bottom: 35px;
-                right: 20px;
-                z-index: 9999;
-                display: flex;
-                flex-direction: column;
-                gap: 6px;
-            }
-            .toast {
-                min-width: 260px;
-                padding: 8px 12px;
-                background-color: var(--bg-panel);
-                color: var(--text-main);
-                border-left: 4px solid var(--accent-color);
-                border-radius: var(--radius);
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                font-size: 0.8rem;
-            }
+            #toast-container { position: fixed; bottom: 35px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 6px; }
+            .toast { min-width: 260px; padding: 8px 12px; background-color: var(--bg-panel); color: var(--text-main); border-left: 4px solid var(--accent-color); border-radius: var(--radius); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
             .toast.error { border-color: var(--danger); }
         </style>
     </head>
@@ -560,26 +285,15 @@
                     </div>
                 </div>
                 <div class="global-controls">
-
                     <div style="display: flex; align-items: center; gap: 4px; background: var(--bg-panel); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: var(--radius);">
                         <label for="record-date" style="margin: 0; font-size: 0.75rem; font-weight: 700; white-space: nowrap; color: var(--text-muted);">View Horizon Date:</label>
                         <input type="date" id="record-date" style="padding: 2px 4px; font-size: 0.8rem; border: none; width: auto; background: transparent;" />
                     </div>
-                    <button class="primary" onclick="toggleModal('trend-monitor-modal')">
-                        <i class="fa-solid fa-chart-line"></i> Agent Trend Monitor
-                    </button>
-                    <button class="primary" onclick="toggleModal('compliance-notifier-modal')">
-                        <i class="fa-solid fa-triangle-exclamation"></i> Compliance Notifier
-                    </button>
-                    <button class="primary" onclick="toggleModal('history-modal')">
-                        <i class="fa-solid fa-table-list"></i> Master Logs View
-                    </button>
-                    <button class="warning" onclick="toggleModal('readme-guide-modal')">
-                        <i class="fa-solid fa-book-open"></i> View Guide
-                    </button>
-                    <button onclick="toggleTheme()" id="theme-btn" title="Toggle Theme">
-                        <i class="fa-solid fa-moon"></i>
-                    </button>
+                    <button class="primary" onclick="syncOnlineData()"><i class="fa-solid fa-rotate"></i> Sync Cloud</button>
+                    <button class="primary" onclick="toggleModal('trend-monitor-modal')"><i class="fa-solid fa-chart-line"></i> Agent Trend Monitor</button>
+                    <button class="primary" onclick="toggleModal('compliance-notifier-modal')"><i class="fa-solid fa-triangle-exclamation"></i> Compliance Notifier</button>
+                    <button class="primary" onclick="toggleModal('history-modal')"><i class="fa-solid fa-table-list"></i> Master Logs View</button>
+                    <button onclick="toggleTheme()" id="theme-btn" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
                     <div style="display: flex; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-color);">
                         <button style="border: none; border-radius: 0; padding: 4px 8px" onclick="adjustFontSize(-2)"><i class="fas fa-minus"></i></button>
                         <button style="border: none; border-radius: 0; padding: 4px 8px; background: var(--bg-panel)" onclick="resetFontSize()"><i class="fas fa-font"></i></button>
@@ -589,55 +303,13 @@
             </header>
 
             <section class="dashboard-grid">
-                <div class="kpi-card">
-                    <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
-                    <div class="kpi-data">
-                        <div class="kpi-value" id="count-total">0</div>
-                        <div class="kpi-label">Active Pool of Agents</div>
-                    </div>
-                </div>
-                <div class="kpi-card success">
-                    <div class="kpi-icon" style="color: var(--success)"><i class="fa-solid fa-user-check"></i></div>
-                    <div class="kpi-data">
-                        <div class="kpi-value" id="count-present">0</div>
-                        <div class="kpi-label">Present (IN)</div>
-                    </div>
-                </div>
-                <div class="kpi-card purple">
-                    <div class="kpi-icon" style="color: var(--purple)"><i class="fa-solid fa-bed"></i></div>
-                    <div class="kpi-data">
-                        <div class="kpi-value" id="count-restDay">0</div>
-                        <div class="kpi-label">Rest Day</div>
-                    </div>
-                </div>
-                <div class="kpi-card danger">
-                    <div class="kpi-icon" style="color: var(--danger)"><i class="fa-solid fa-times"></i></div>
-                    <div class="kpi-data">
-                        <div class="kpi-value" id="count-absent">0</div>
-                        <div class="kpi-label">Absent (A- / LWOP)</div>
-                    </div>
-                </div>
-                <div class="kpi-card warning">
-                    <div class="kpi-icon" style="color: var(--warning)"><i class="fa-solid fa-plane-departure"></i></div>
-                    <div class="kpi-data">
-                        <div class="kpi-value" id="count-leave">0</div>
-                        <div class="kpi-label">On Leave Status</div>
-                    </div>
-                </div>
-                <div class="kpi-card danger">
-                    <div class="kpi-icon" style="color: var(--danger)"><i class="fa-solid fa-business-time"></i></div>
-                    <div class="kpi-data">
-                        <div class="kpi-value" id="total-late">0m</div>
-                        <div class="kpi-label">Cumulative Tardiness</div>
-                    </div>
-                </div>
-                <div class="kpi-card purple">
-                    <div class="kpi-icon" style="color: var(--purple)"><i class="fa-solid fa-mug-hot"></i></div>
-                    <div class="kpi-data">
-                        <div class="kpi-value" id="total-overbreaks">0m</div>
-                        <div class="kpi-label">Cumulative Overbreaks</div>
-                    </div>
-                </div>
+                <div class="kpi-card"><div class="kpi-icon"><i class="fa-solid fa-users"></i></div><div class="kpi-data"><div class="kpi-value" id="count-total">0</div><div class="kpi-label">Active Pool of Agents</div></div></div>
+                <div class="kpi-card success"><div class="kpi-icon" style="color: var(--success)"><i class="fa-solid fa-user-check"></i></div><div class="kpi-data"><div class="kpi-value" id="count-present">0</div><div class="kpi-label">Present (IN)</div></div></div>
+                <div class="kpi-card purple"><div class="kpi-icon" style="color: var(--purple)"><i class="fa-solid fa-bed"></i></div><div class="kpi-data"><div class="kpi-value" id="count-restDay">0</div><div class="kpi-label">Rest Day</div></div></div>
+                <div class="kpi-card danger"><div class="kpi-icon" style="color: var(--danger)"><i class="fa-solid fa-times"></i></div><div class="kpi-data"><div class="kpi-value" id="count-absent">0</div><div class="kpi-label">Absent (A- / LWOP)</div></div></div>
+                <div class="kpi-card warning"><div class="kpi-icon" style="color: var(--warning)"><i class="fa-solid fa-plane-departure"></i></div><div class="kpi-data"><div class="kpi-value" id="count-leave">0</div><div class="kpi-label">On Leave Status</div></div></div>
+                <div class="kpi-card danger"><div class="kpi-icon" style="color: var(--danger)"><i class="fa-solid fa-business-time"></i></div><div class="kpi-data"><div class="kpi-value" id="total-late">0m</div><div class="kpi-label">Cumulative Tardiness</div></div></div>
+                <div class="kpi-card purple"><div class="kpi-icon" style="color: var(--purple)"><i class="fa-solid fa-mug-hot"></i></div><div class="kpi-data"><div class="kpi-value" id="total-overbreaks">0m</div><div class="kpi-label">Cumulative Overbreaks</div></div></div>
             </section>
 
             <section class="panel chart-panel">
@@ -655,8 +327,8 @@
                 <section class="panel">
                     <h3 style="margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;">
                         <span>Live Operational Stream View</span>
-					<div id="live-clock"></div>
-                        <small style="font-size: 0.75rem; color: var(--accent-color); font-weight: normal;"><i class="fa-solid fa-file-import"></i> Local file ecosystem; raw data is stored in the browser's localStorage; </small>
+                        <div id="live-clock"></div>
+                        <small style="font-size: 0.75rem; color: var(--accent-color); font-weight: normal;"><i class="fa-solid fa-cloud-arrow-down"></i> Live Cloud Database Synchronized</small>
                     </h3>
                     <div class="table-wrapper">
                         <table id="stream-table">
@@ -679,16 +351,16 @@
                 <div style="font-weight: bold; white-space: nowrap">System Board Ticker:</div>
                 <div class="marquee-wrapper">
                     <div class="marquee">
-					Click on the <strong> Load Masterfile </strong> and then browse through the Epson shared folder and go to the Agent Resources >> TOOLS >> attendance-masterfile.csv.
-					</div>
-                </div>
-                    <div style="display: flex; align-items: center; gap: 4px; padding: 2px 6px;">
-                        <label class="btn primary" for="csv-file-picker">
-                            <i class="fa-solid fa-file-csv"></i> Load Masterfile
-                        </label>
-                        <input type="file" id="csv-file-picker" accept=".csv" style="display: none;" />
-                        <span id="file-status-label" style="font-size: 0.75rem; color: var(--text-muted); padding: 0 4px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">No file loaded</span>
+                        Connected to cloud data repository. Updates pushed to <strong>attendance-masterfile.csv</strong> render automatically across all active browser clients.
                     </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 4px; padding: 2px 6px;">
+                    <label class="btn primary" for="csv-file-picker">
+                        <i class="fa-solid fa-file-csv"></i> Manual Import
+                    </label>
+                    <input type="file" id="csv-file-picker" accept=".csv" style="display: none;" />
+                    <span id="file-status-label" style="font-size: 0.75rem; color: var(--text-muted); padding: 0 4px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Cloud-synced</span>
+                </div>
             </footer>
         </div>
 
@@ -725,7 +397,7 @@
                 </div>
                 <div class="modal-body">
                     <blockquote style="background: rgba(231, 76, 60, 0.08); border-left: 4px solid var(--danger); padding: 8px; font-size: 0.8rem; border-radius: var(--radius); margin-bottom: 6px;">
-                        <strong>PROVISIONAL OPERATIONS NOTICE:</strong> Evaluated infractions reflect guidelines that are subject to adjustment pending formal HR validation. Evaluation checks occur within the target calendar frame; associated dynamic <strong>Notice To Explain (NTE)</strong> generation processes occur during the subsequent month following performance lapses.
+                        <strong>PROVISIONAL OPERATIONS NOTICE:</strong> Evaluated infractions reflect guidelines subject to HR validation.
                     </blockquote>
                     <div class="table-wrapper" style="max-height: 55vh">
                         <table>
@@ -756,13 +428,10 @@
                         <input 
                             type="text" 
                             id="master-excel-search" 
-                            placeholder="Search logs by Agent, Status, Date or Keyword (Excel-style instant filter)..." 
+                            placeholder="Search logs by Agent, Status, Date or Keyword..." 
                             oninput="filterMasterLedgerGrid()"
                         />
                     </div>
-					<button onclick="purgeLocalStorage()" title="Purge cached data" style="color:red;">
-						<i class="fa-solid fa-trash"></i> Purge Data
-					</button>
                     <div class="table-wrapper" style="max-height: 58vh">
                         <table>
                             <thead>
@@ -781,192 +450,149 @@
             </div>
         </div>
 
-        <div class="modal-overlay" id="readme-guide-modal">
-            <div class="modal-content" style="max-width: 800px">
-                <div class="modal-header">
-                    <h3><i class="fa-solid fa-book" style="color: var(--warning)"></i> Dashboard Monitoring Guide</h3>
-                    <button class="close-modal" onclick="toggleModal('readme-guide-modal')">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <details class="readme-details" open>
-                        <summary class="readme-summary">1. Masterfile Sourcing & Path Directory Instructions</summary>
-                        <div class="readme-content">
-                            <p>To view operational data analytics metrics, you must explicitly supply the current core logs ledger using the manual file target loader widget in the lower right console layout interface loop.</p>
-                            <p style="margin-top: 6px;"><strong>Target File Destination Vector String:</strong></p>
-                            <blockquote style="background: var(--bg-input); padding: 6px 10px; border-left: 4px solid var(--warning); font-family: monospace; user-select: all; margin: 4px 0; word-break: break-all;">\\hgs-ph.com\shared folders\Epson\Agents\Agents Resources\TOOLS</blockquote>
-                            <p style="margin-top: 6px; font-size: 0.78rem; color: var(--text-muted);"><i class="fa-solid fa-circle-info"></i> <strong>Workflow Action Note:</strong> When the browser loading interface environment wizard triggers open, simply copy the path text network link layout matrix above, paste it inside your browser dialog explorer folder navigation address locator tracking window, and locate <strong><span class="readme-highlight">attendance-masterfile.csv</span></strong>.</p>
-                        </div>
-                    </details>
-                    <details class="readme-details">
-                        <summary class="readme-summary">2. Real-Time View & Excel Filtering</summary>
-                        <div class="readme-content">
-                            <p>Use the global navigation control panel headers to step backward or forward along your calendar track timeline view matrix. Clicking into the <strong>Master Logs View</strong> dashboard opens an instant querying search window engine built to look up values identically to spreadsheet filtering models.</p>
-                        </div>
-                    </details>
-                </div>
-            </div>
-        </div>
-
         <div id="toast-container"></div>
 
         <script>
             (function () {
                 "use strict";
 
-                // Global Operational Database State
-				let database = [];
-				const agentPoolList = [
-					"Abrio, Bernadette", "Abulencia, Alvina", "Alibadbad, Precy",
-					"Arguelles, Marc Ainsley", "Avanzado, Maria Teresita", "Bachiller, Romeo Marvin",
-					"Biojon, James Carlo", "Boquiña, Princess", "Buhat, Cherry",
-					"Dilla, John Dominique", "Fernandez, Dennis", "Gabac, Philip",
-					"Igual, Tristan John", "Jabson, Denisse Gayle", "Orbon, Kathleen Mae",
-					"Rodriguez, Shairaine", "Sumalinog, Jhomer"
-				];
+                // ONLINE MASTERFILE DATA TARGET URL
+                // By default, it looks for attendance-masterfile.csv uploaded in the same GitHub repository folder.
+                const DATA_SOURCE_URL = "attendance-masterfile.csv";
 
-                // Standardized Date Normalization Engine to handle dynamic CSV formats (YYYY-MM-DD, MM/DD/YYYY, M/D/YYYY)
+                let database = [];
+                const agentPoolList = [
+                    "Abrio, Bernadette", "Abulencia, Alvina", "Alibadbad, Precy",
+                    "Arguelles, Marc Ainsley", "Avanzado, Maria Teresita", "Bachiller, Romeo Marvin",
+                    "Biojon, James Carlo", "Boquiña, Princess", "Buhat, Cherry",
+                    "Dilla, John Dominique", "Fernandez, Dennis", "Gabac, Philip",
+                    "Igual, Tristan John", "Jabson, Denisse Gayle", "Orbon, Kathleen Mae",
+                    "Rodriguez, Shairaine", "Sumalinog, Jhomer"
+                ];
+
                 function normalizeDateString(dateStr) {
                     if (!dateStr) return "";
                     let cleanStr = dateStr.trim().replace(/^"|"$/g, "");
                     if (!cleanStr) return "";
 
-                    // If already YYYY-MM-DD
-                    if (/^\d{4}-\d{2}-\d{2}$/.test(cleanStr)) {
-                        return cleanStr;
-                    }
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(cleanStr)) return cleanStr;
 
-                    // Check for standard JS readable formats or forward slashes
                     let parts = cleanStr.split(/[\/\-\.]/);
                     if (parts.length === 3) {
-                        let p1 = parseInt(parts[0], 10);
-                        let p2 = parseInt(parts[1], 10);
-                        let p3 = parseInt(parts[2], 10);
-
+                        let p1 = parseInt(parts[0], 10), p2 = parseInt(parts[1], 10), p3 = parseInt(parts[2], 10);
                         if (!isNaN(p1) && !isNaN(p2) && !isNaN(p3)) {
-                            // YYYY/MM/DD or YYYY-MM-DD
                             if (parts[0].length === 4) {
-                                let y = p1;
-                                let m = String(p2).padStart(2, '0');
-                                let d = String(p3).padStart(2, '0');
-                                return `${y}-${m}-${d}`;
-                            } 
-                            // MM/DD/YYYY or M/D/YYYY
-                            else if (parts[2].length === 4) {
-                                let y = p3;
-                                let m = String(p1).padStart(2, '0');
-                                let d = String(p2).padStart(2, '0');
-                                return `${y}-${m}-${d}`;
+                                return `${p1}-${String(p2).padStart(2, '0')}-${String(p3).padStart(2, '0')}`;
+                            } else if (parts[2].length === 4) {
+                                return `${p3}-${String(p1).padStart(2, '0')}-${String(p2).padStart(2, '0')}`;
                             }
                         }
                     }
 
-                    // Native fallback parser
                     let dObj = new Date(cleanStr);
                     if (!isNaN(dObj.getTime())) {
-                        let y = dObj.getFullYear();
-                        let m = String(dObj.getMonth() + 1).padStart(2, '0');
-                        let d = String(dObj.getDate()).padStart(2, '0');
-                        return `${y}-${m}-${d}`;
+                        return `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`;
                     }
-
                     return cleanStr;
                 }
 
-				// Purge function
-				window.purgeLocalStorage = function() {
-					if (confirm("Are you sure you want to clear the masterfile cache? This action cannot be undone.")) {
-						localStorage.removeItem("attendance_masterfile_data");
-						database = [];
-						location.reload();
-					}
-				};
+                // ONLINE FETCH ENGINE (Loads directly from repo or cloud source)
+                window.syncOnlineData = function() {
+                    fetch(DATA_SOURCE_URL + "?cacheBust=" + Date.now())
+                        .then(response => {
+                            if (!response.ok) throw new Error("Cloud masterfile not found");
+                            return response.text();
+                        })
+                        .then(csvText => {
+                            database = [];
+                            parseCSVDatabasePayload(csvText);
+                            refreshDashboardUI();
+                            showToast("Dashboard synchronized with online repository.", "success");
+                        })
+                        .catch(err => {
+                            console.warn("Online sync fallback:", err);
+                            const cached = localStorage.getItem("attendance_masterfile_data");
+                            if (cached) {
+                                database = [];
+                                parseCSVDatabasePayload(cached);
+                                refreshDashboardUI();
+                                showToast("Offline mode: Loaded local cache.", "warning");
+                            } else {
+                                showToast("Could not load online CSV masterfile.", "error");
+                            }
+                        });
+                };
 
-                // Manual Localized File Ingestion Core Pipeline Process Logic Handler
-				function handleManualCSVUpload(event) {
-					const parsedTargetFile = event.target.files[0];
-					if (!parsedTargetFile) return;
+                function handleManualCSVUpload(event) {
+                    const parsedTargetFile = event.target.files[0];
+                    if (!parsedTargetFile) return;
 
-					document.getElementById("file-status-label").textContent = parsedTargetFile.name;
+                    document.getElementById("file-status-label").textContent = parsedTargetFile.name;
 
-					const fileReaderEngine = new FileReader();
-					fileReaderEngine.onload = function (e) {
-						const textPayload = e.target.result;
-						
-						localStorage.setItem("attendance_masterfile_data", textPayload);
-						database = []; // Reset existing local database array before parsing complete fresh batch
-						parseCSVDatabasePayload(textPayload);
-						
-						refreshDashboardUI();
-						showToast("Database synchronized and saved to local storage.", "success");
-					};
-					fileReaderEngine.readAsText(parsedTargetFile);
-				}
+                    const fileReaderEngine = new FileReader();
+                    fileReaderEngine.onload = function (e) {
+                        const textPayload = e.target.result;
+                        localStorage.setItem("attendance_masterfile_data", textPayload);
+                        database = [];
+                        parseCSVDatabasePayload(textPayload);
+                        refreshDashboardUI();
+                        showToast("Manual CSV loaded locally.", "success");
+                    };
+                    fileReaderEngine.readAsText(parsedTargetFile);
+                }
 
-                // Dashboard Initializer Hooks Pipeline
-				document.addEventListener("DOMContentLoaded", () => {
-					initTheme();
-					initClock();
-					initFontSize();
-					
-					const todayStr = new Date().toISOString().split('T')[0];
-					document.getElementById("record-date").value = todayStr;
-					document.getElementById("record-date").addEventListener("change", refreshDashboardUI);
-					
-					document.getElementById("csv-file-picker").addEventListener("change", handleManualCSVUpload);
+                document.addEventListener("DOMContentLoaded", () => {
+                    initTheme();
+                    initClock();
+                    initFontSize();
+                    
+                    const todayStr = new Date().toISOString().split('T')[0];
+                    document.getElementById("record-date").value = todayStr;
+                    document.getElementById("record-date").addEventListener("change", refreshDashboardUI);
+                    
+                    document.getElementById("csv-file-picker").addEventListener("change", handleManualCSVUpload);
 
-					// PERSISTENCE: Load from storage if available
-					const savedData = localStorage.getItem("attendance_masterfile_data");
-					if (savedData) {
-						parseCSVDatabasePayload(savedData);
-						showToast("Restored data from local storage.", "success");
-					}
+                    // Fetch live CSV online on initial page load
+                    syncOnlineData();
+                });
 
-					refreshDashboardUI();
-				});
+                function parseCSVDatabasePayload(csvText) {
+                    const lines = csvText.split(/\r?\n/);
+                    const existingKeys = new Set(database.map(d => `${d.date}|${d.empName}`));
 
-				function parseCSVDatabasePayload(csvText) {
-					const lines = csvText.split(/\r?\n/);
-					const existingKeys = new Set(database.map(d => `${d.date}|${d.empName}`));
+                    for (let i = 1; i < lines.length; i++) {
+                        const rowLine = lines[i].trim();
+                        if (!rowLine) continue;
 
-					for (let i = 1; i < lines.length; i++) {
-						const rowLine = lines[i].trim();
-						if (!rowLine) continue;
+                        const segments = rowLine.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                        if (segments.length >= 3) {
+                            const date = normalizeDateString(segments[0].trim());
+                            const empName = segments[1].replace(/^"|"$/g, "").trim();
+                            
+                            const uniqueKey = `${date}|${empName}`;
+                            if (existingKeys.has(uniqueKey)) continue;
 
-						const segments = rowLine.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-						if (segments.length >= 3) {
-							const rawDate = segments[0].trim();
-                            const date = normalizeDateString(rawDate);
-							const empName = segments[1].replace(/^"|"$/g, "").trim();
-							
-							// Duplicate Check
-							const uniqueKey = `${date}|${empName}`;
-							if (existingKeys.has(uniqueKey)) continue;
+                            const status = segments[2].trim();
+                            let metrics = {};
+                            if (status === "Present") {
+                                metrics.lateMins = parseInt(segments[3]) || 0;
+                                metrics.obMins = parseInt(segments[4]) || 0;
+                            } else if (status === "Leave") {
+                                metrics.leaveType = segments[5] ? segments[5].replace(/^"|"$/g, "") : "Sick leave";
+                                metrics.leaveDays = parseFloat(segments[6]) || 1;
+                            }
 
-							const status = segments[2].trim();
-							let metrics = {};
-							if (status === "Present") {
-								metrics.lateMins = parseInt(segments[3]) || 0;
-								metrics.obMins = parseInt(segments[4]) || 0;
-							} else if (status === "Leave") {
-								metrics.leaveType = segments[5] ? segments[5].replace(/^"|"$/g, "") : "Sick leave";
-								metrics.leaveDays = parseFloat(segments[6]) || 1;
-							}
+                            const remarks = segments[7] ? segments[7].replace(/^"|"$/g, "") : "";
 
-							const remarks = segments[7] ? segments[7].replace(/^"|"$/g, "") : "";
-
-							database.push({
-								uuid: "id_" + i + "_" + Date.now(),
-								date,
-								empName,
-								status,
-								metrics,
-								remarks
-							});
-							
-							existingKeys.add(uniqueKey);
-						}
-					}
-				}
+                            database.push({
+                                uuid: "id_" + i + "_" + Date.now(),
+                                date, empName, status, metrics, remarks
+                            });
+                            
+                            existingKeys.add(uniqueKey);
+                        }
+                    }
+                }
 
                 window.showToast = function (message, type = "error") {
                     const container = document.getElementById("toast-container");
@@ -977,7 +603,6 @@
                     setTimeout(() => { toast.remove(); }, 6000);
                 };
 
-                // UI Layout Theming & Typography Adjustments Engine Code
                 window.toggleTheme = function () {
                     const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
                     const targetTheme = currentTheme === "dark" ? "light" : "dark";
@@ -1040,7 +665,6 @@
                     }
                 };
 
-                // Analytical UI Processing Calculations 
                 function refreshDashboardUI() {
                     const rawTargetDate = document.getElementById("record-date").value;
                     const targetDateValue = normalizeDateString(rawTargetDate);
@@ -1086,12 +710,12 @@
                     streamBody.innerHTML = "";
 
                     if (database.length === 0) {
-                        streamBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--warning); padding: 24px; font-weight: 600;"><i class="fa-solid fa-arrow-up"></i> Ingestion Required: Click 'Load Masterfile' above to select your logs source file.</td></tr>`;
+                        streamBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--warning); padding: 24px; font-weight: 600;"><i class="fa-solid fa-cloud-arrow-down"></i> Loading online database...</td></tr>`;
                         return;
                     }
 
                     if (dailyEntries.length === 0) {
-                        streamBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">No tracking entries logged for this specific target timeline horizon folder segment.</td></tr>`;
+                        streamBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">No tracking entries logged for this date.</td></tr>`;
                         return;
                     }
 
@@ -1206,7 +830,7 @@
                     masterBody.innerHTML = "";
 
                     if (database.length === 0) {
-                        masterBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">Network database ledger lines appear empty or sync is pending.</td></tr>`;
+                        masterBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">Network database ledger lines appear empty.</td></tr>`;
                         return;
                     }
 
@@ -1241,7 +865,6 @@
                     filterMasterLedgerGrid();
                 }
 
-                // Excel-Like Search Bar Filtering Matrix Routine Function
                 window.filterMasterLedgerGrid = function() {
                     const searchInput = document.getElementById("master-excel-search");
                     if (!searchInput) return;
