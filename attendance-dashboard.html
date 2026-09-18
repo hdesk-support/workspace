@@ -1,1731 +1,1292 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Analysis Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: #131c2e;
-            --bg-hover: #334155;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
-            --accent-purple: #8b5cf6;
-            --accent-teal: #14b8a6;
-            --border-color: #334155;
-            --danger-color: #ef4444;
-            --danger-hover: #dc2626;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --font-scale: 100%;
-            --radius: 8px;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Team Attendance - Dashboard</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=23195&format=png&color=40C057" />
+        <link rel="shortcut icon" href="https://img.icons8.com/?size=100&id=23195&format=png&color=40C057" />
 
-        [data-theme="light"] {
-            --bg-primary: #f1f5f9;
-            --bg-secondary: #ffffff;
-            --bg-card: #ffffff;
-            --bg-hover: #e2e8f0;
-            --text-primary: #0f172a;
-            --text-secondary: #64748b;
-            --accent-color: #2563eb;
-            --accent-hover: #1d4ed8;
-            --accent-purple: #7c3aed;
-            --accent-teal: #0d9488;
-            --border-color: #cbd5e1;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-        }
-
-        html {
-            font-size: var(--font-scale);
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* HEADER */
-        header {
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            flex-wrap: wrap;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .logo-title {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-
-        .header-nav {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            background-color: var(--bg-card);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            padding: 0.5rem 0.85rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .btn:hover {
-            background-color: var(--bg-hover);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            color: #ffffff;
-            border-color: var(--accent-color);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--accent-hover);
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: #ffffff;
-            border-color: var(--danger-color);
-        }
-
-        .btn-danger:hover {
-            background-color: var(--danger-hover);
-        }
-
-        .controls-group {
-            display: flex;
-            align-items: center;
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 0.15rem;
-        }
-
-        .controls-group button {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            padding: 0.35rem 0.6rem;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .controls-group button:hover {
-            background-color: var(--bg-hover);
-        }
-
-        .font-scale-display {
-            font-size: 0.8rem;
-            padding: 0 0.5rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        /* MAIN CONTENT */
-        main {
-            flex: 1;
-            padding: 1.5rem;
-            max-width: 1650px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .dashboard-filter-bar {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .filter-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .filter-item label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        select, input[type="text"], input[type="password"] {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            padding: 0.5rem;
-            border-radius: var(--radius);
-            font-size: 0.875rem;
-            outline: none;
-        }
-
-        select:focus, input:focus {
-            border-color: var(--accent-color);
-        }
-
-        /* DATA SCOPE NOTE */
-        .data-scope-banner {
-            background-color: rgba(59, 130, 246, 0.08);
-            border: 1px solid rgba(59, 130, 246, 0.25);
-            border-radius: var(--radius);
-            padding: 0.6rem 1rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-
-        .data-scope-banner i {
-            color: var(--accent-color);
-            font-size: 1rem;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .metric-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 1.1rem 1.25rem;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-        }
-
-        .metric-title {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .metric-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .metric-sub {
-            font-size: 0.75rem;
-            color: var(--accent-teal);
-            font-weight: 500;
-        }
-
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        @media (max-width: 650px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
+        <style>
+            /* =========================================
+           CSS VARIABLES (THEMING & GLOBAL)
+           ========================================= */
+            :root {
+                --bg-body: #121212;
+                --bg-panel: #1e1e1e;
+                --bg-input: #2d2d2d;
+                --text-main: #f0f0f0;
+                --text-muted: #aaaaaa;
+                --border-color: #333333;
+                --accent-color: #3498db;
+                --accent-hover: #2980b9;
+                --success: #2ecc71;
+                --danger: #e74c3c;
+                --warning: #ff9800;
+                --purple: #9b59b6;
+                --base-font-size: 14px;
+                --radius: 6px;
+                --transition: all 0.2s ease;
             }
-        }
 
-        .chart-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 1.25rem;
-            box-shadow: var(--shadow);
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .chart-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .bar-chart-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .bar-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .bar-label-group {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-        }
-
-        .bar-track {
-            height: 10px;
-            background-color: var(--bg-primary);
-            border-radius: 5px;
-            overflow: hidden;
-            width: 100%;
-        }
-
-        .bar-fill {
-            height: 100%;
-            background-color: var(--accent-color);
-            border-radius: 5px;
-            width: 0%;
-            transition: width 0.6s ease;
-        }
-
-        .bar-fill.purple { background-color: var(--accent-purple); }
-        .bar-fill.teal { background-color: var(--accent-teal); }
-        .bar-fill.warning { background-color: var(--warning-color); }
-
-        /* MODALS */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-container {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            width: 90%;
-            max-width: 1200px;
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .modal-header {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .modal-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
-        }
-
-        .info-card {
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .info-card-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--accent-color);
-        }
-
-        .meta-tag-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-            margin-top: 0.5rem;
-            padding-top: 0.5rem;
-            border-top: 1px dashed var(--border-color);
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .meta-tag-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .meta-tag-item strong {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .dropzone {
-            border: 2px dashed var(--accent-color);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            text-align: center;
-            background-color: rgba(59, 130, 246, 0.05);
-            cursor: pointer;
-            margin-bottom: 1rem;
-            transition: background-color 0.2s ease;
-        }
-
-        .dropzone:hover, .dropzone.dragover {
-            background-color: rgba(59, 130, 246, 0.15);
-        }
-
-        .dropzone i {
-            font-size: 2rem;
-            color: var(--accent-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-            max-height: 380px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8rem;
-            text-align: left;
-        }
-
-        th, td {
-            padding: 0.6rem 0.8rem;
-            border-bottom: 1px solid var(--border-color);
-            white-space: nowrap;
-        }
-
-        th {
-            background-color: var(--bg-card);
-            color: var(--text-secondary);
-            position: sticky;
-            top: 0;
-            z-index: 1;
-            font-weight: 600;
-        }
-
-        tr:hover td {
-            background-color: var(--bg-hover);
-        }
-
-        .pagination-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 1rem;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        /* LEDGER FILTER CONTROLS */
-        .ledger-toolbar {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            flex-wrap: wrap;
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .ledger-filter-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .ledger-filter-group label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .row-checkbox {
-            cursor: pointer;
-            width: 15px;
-            height: 15px;
-        }
-
-        /* FOOTER */
-        footer {
-            background-color: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            padding: 0.5rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            bottom: 0;
-            z-index: 10;
-            font-size: 0.8rem;
-            gap: 1rem;
-        }
-
-        .footer-left {
-            width: 220px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            white-space: nowrap;
-        }
-
-        .footer-center {
-            flex: 1;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
-        .marquee-text {
-            display: inline-block;
-            padding-left: 100%;
-            animation: marquee 25s linear infinite;
-            color: var(--accent-color);
-            font-weight: 500;
-        }
-
-        @keyframes marquee {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
-        }
-
-        .footer-right {
-            width: 220px;
-            text-align: right;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-secondary);
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- HEADER -->
-    <header>
-        <div class="logo-title">
-            <i class="fa-solid fa-chart-line"></i>
-            <span>Contact Analytics</span>
-        </div>
-
-        <div class="header-nav">
-            <button class="btn" id="btnMasterLedger"><i class="fa-solid fa-database"></i> Master Ledger</button>
-            <button class="btn" id="btnContactAnalysis"><i class="fa-solid fa-magnifying-glass-chart"></i> Contact Drivers</button>
-            <button class="btn" id="btnRegIntel"><i class="fa-solid fa-earth-asia"></i> Regional Intelligence</button>
-            <button class="btn" id="btnVolComp"><i class="fa-solid fa-chart-column"></i> Volume Comp</button>
-
-            <div class="controls-group" style="margin-left: 0.5rem;">
-                <button id="btnFontDec" title="Decrease Font Size"><i class="fa-solid fa-minus"></i></button>
-                <span class="font-scale-display" id="fontScaleDisplay">100%</span>
-                <button id="btnFontInc" title="Increase Font Size"><i class="fa-solid fa-plus"></i></button>
-            </div>
-
-            <button class="btn" id="btnThemeToggle" title="Toggle Light/Dark Theme">
-                <i class="fa-solid fa-moon" id="themeIcon"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- MAIN DASHBOARD CONTENT -->
-    <main>
-        <!-- FILTER BAR -->
-        <div class="dashboard-filter-bar">
-            <div class="filter-item">
-                <label for="filterMonth"><i class="fa-regular fa-calendar"></i> Month</label>
-                <select id="filterMonth">
-                    <option value="ALL">All Months</option>
-                </select>
-            </div>
-
-            <div class="filter-item">
-                <label for="filterCountry"><i class="fa-solid fa-earth-americas"></i> Country</label>
-                <select id="filterCountry">
-                    <option value="ALL">All Countries</option>
-                </select>
-            </div>
-
-            <div class="filter-item">
-                <label for="filterChannel"><i class="fa-solid fa-headset"></i> Channel</label>
-                <select id="filterChannel">
-                    <option value="ALL">All Channels</option>
-                </select>
-            </div>
-
-            <div class="filter-item">
-                <label for="filterDirection"><i class="fa-solid fa-route"></i> Direction</label>
-                <select id="filterDirection">
-                    <option value="ALL">All Directions</option>
-                </select>
-            </div>
-
-            <div class="filter-item" style="margin-left: auto;">
-                <label for="searchQuery"><i class="fa-solid fa-search"></i> Search Keyword</label>
-                <input type="text" id="searchQuery" placeholder="Search model, reason, type...">
-            </div>
-        </div>
-
-        <!-- DATA SCOPE DISCLOSURE BANNER -->
-        <div class="data-scope-banner">
-            <i class="fa-solid fa-circle-info"></i>
-            <span><strong>Scope Note:</strong> Dashboard cards and visual charts automatically exclude unassigned and uninformative entries (e.g., <em>N/A</em>, <em>Unable to get the model</em>). For a full unfiltered audit, check the <strong>Master Ledger</strong> or raw data source.</span>
-        </div>
-
-        <!-- KPI METRICS ROW 1 -->
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-title">Total Contacts <i class="fa-solid fa-phone-volume"></i></div>
-                <div class="metric-value" id="kpiTotal">0</div>
-                <div class="metric-sub"><i class="fa-solid fa-database"></i> Live Dataset Volume</div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-title">Top Country <i class="fa-solid fa-globe"></i></div>
-                <div class="metric-value" id="kpiTopCountry" style="font-size: 1.3rem;">-</div>
-                <div class="metric-sub" id="kpiTopCountrySub">0 Contacts</div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-title">Primary Driver <i class="fa-solid fa-triangle-exclamation"></i></div>
-                <div class="metric-value" id="kpiTopReason" style="font-size: 1.3rem;">-</div>
-                <div class="metric-sub" id="kpiTopReasonSub">0 Contacts</div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-title">Resolution Rate <i class="fa-solid fa-circle-check"></i></div>
-                <div class="metric-value" id="kpiResolution">0%</div>
-                <div class="metric-sub" id="kpiResolutionSub">Resolved Dispositions</div>
-            </div>
-        </div>
-
-        <!-- KPI METRICS ROW 2 -->
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-title">Top Product Type <i class="fa-solid fa-tags"></i></div>
-                <div class="metric-value" id="kpiTopType" style="font-size: 1.25rem;">-</div>
-                <div class="metric-sub" id="kpiTopTypeSub">Normalized B2C / B2B</div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-title">Top Channel <i class="fa-solid fa-comments"></i></div>
-                <div class="metric-value" id="kpiTopChannel" style="font-size: 1.15rem;">-</div>
-                <div class="metric-sub" id="kpiTopChannelSub">Channel × Direction</div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-title">Top Category <i class="fa-solid fa-layer-group"></i></div>
-                <div class="metric-value" id="kpiTopCatSub" style="font-size: 1.15rem;">-</div>
-                <div class="metric-sub" id="kpiTopCatSubVal">Category × Sub-Category</div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-title">Top Disposition <i class="fa-solid fa-clipboard-check"></i></div>
-                <div class="metric-value" id="kpiTopDisp" style="font-size: 1.15rem;">-</div>
-                <div class="metric-sub" id="kpiTopDispSub">Disposition × Main Reason</div>
-            </div>
-        </div>
-
-        <!-- CHARTS GRID -->
-        <div class="charts-grid">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title"><i class="fa-regular fa-calendar-days"></i> Month Volume Comparison (Jan - Dec)</div>
-                </div>
-                <div class="bar-chart-list" id="chartMonth"></div>
-            </div>
-
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title"><i class="fa-solid fa-list-check"></i> Main Reason Breakdown</div>
-                </div>
-                <div class="bar-chart-list" id="chartMainReason"></div>
-            </div>
-
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title"><i class="fa-solid fa-sitemap"></i> Main Reason × Sub Reason Top Pairs</div>
-                </div>
-                <div class="bar-chart-list" id="chartMainSub"></div>
-            </div>
-
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title"><i class="fa-solid fa-print"></i> Product Category Share</div>
-                </div>
-                <div class="bar-chart-list" id="chartCategory"></div>
-            </div>
-
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title"><i class="fa-solid fa-diagram-project"></i> Category × Sub Category Top Pairs</div>
-                </div>
-                <div class="bar-chart-list" id="chartCatSub"></div>
-            </div>
-
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title"><i class="fa-solid fa-cubes"></i> Top 5 Product Models</div>
-                </div>
-                <div class="bar-chart-list" id="chartTopModels"></div>
-            </div>
-        </div>
-    </main>
-
-    <!-- FOOTER -->
-    <footer>
-        <div class="footer-left" id="liveDateTime">Loading Date/Time...</div>
-        <div class="footer-center">
-            <div class="marquee-text">
-                📢 Contact Analysis Dashboard 2026 • Validated Data Scope • IndexedDB Storage Enabled (37,000+ Records)
-            </div>
-        </div>
-        <div class="footer-right">
-            <i class="fa-solid fa-code"></i> Enterprise Analytics v2.6
-        </div>
-    </footer>
-
-    <!-- MASTER LEDGER MODAL -->
-    <div class="modal-overlay" id="modalMasterLedger">
-        <div class="modal-container">
-            <div class="modal-header">
-                <div class="chart-title"><i class="fa-solid fa-database"></i> Master Data Ledger (Raw Unfiltered View)</div>
-                <button class="btn" onclick="closeModal('modalMasterLedger')"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="dropzone" id="dropzone" onclick="document.getElementById('csvFileInput').click()">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                    <h3>Drag & Drop CSV File Here or Click to Browse</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                        Schema: YEAR, DATE, MONTH, CHANNEL, NAME, DIRECTION, COUNTRY, MAINREASON, SUBREASON, CATEGORY, SUBCATEGORY, MODEL, DISPOSITION, TYPE
-                    </p>
-                    <input type="file" id="csvFileInput" accept=".csv, .tsv, .txt" style="display: none;">
-                </div>
-
-                <!-- LEDGER TOOLBAR: SEARCH & SELECTIVE PURGE FILTERS -->
-                <div class="ledger-toolbar">
-                    <div class="ledger-filter-group" style="flex: 1; min-width: 200px;">
-                        <label for="ledgerSearch"><i class="fa-solid fa-magnifying-glass"></i> Search</label>
-                        <input type="text" id="ledgerSearch" placeholder="Filter ledger records..." style="width: 100%;">
-                    </div>
-                    <div class="ledger-filter-group">
-                        <label for="ledgerFilterMonth">Month</label>
-                        <select id="ledgerFilterMonth"><option value="ALL">All Months</option></select>
-                    </div>
-                    <div class="ledger-filter-group">
-                        <label for="ledgerFilterCountry">Country</label>
-                        <select id="ledgerFilterCountry"><option value="ALL">All Countries</option></select>
-                    </div>
-                    <div class="ledger-filter-group">
-                        <label for="ledgerFilterChannel">Channel</label>
-                        <select id="ledgerFilterChannel"><option value="ALL">All Channels</option></select>
+            [data-theme="light"] {
+                --bg-body: #f5f7fa;
+                --bg-panel: #ffffff;
+                --bg-input: #f8fafc;
+                --text-main: #2c3e50;
+                --text-muted: #64748b;
+                --border-color: #e2e8f0;
+                --accent-color: #1e40af;
+                --accent-hover: #1e3a8a;
+                --purple: #6b21a8;
+            }
+
+            /* =========================================
+           GLOBAL ELEMENT STYLES
+           ========================================= */
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            html {
+                font-size: var(--base-font-size);
+            }
+
+            body {
+                font-family: "Plus Jakarta Sans", "Segoe UI", Tahoma, sans-serif;
+                background-color: var(--bg-body);
+                color: var(--text-main);
+                transition: var(--transition);
+                line-height: 1.3;
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 1600px;
+                margin: 0 auto;
+                padding: 6px 12px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                height: calc(100vh - 35px);
+            }
+
+            h2, h3, h4 {
+                color: var(--text-main);
+                font-weight: 600;
+            }
+
+            /* Buttons */
+            button, .file-upload-btn {
+                background-color: var(--bg-input);
+                color: var(--text-main);
+                border: 1px solid var(--border-color);
+                padding: 5px 10px;
+                border-radius: var(--radius);
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 0.8rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+            button:hover, .file-upload-btn:hover {
+                background-color: var(--border-color);
+            }
+            button.primary, .file-upload-btn.primary {
+                background-color: var(--accent-color);
+                color: #fff;
+                border-color: var(--accent-color);
+            }
+            button.primary:hover, .file-upload-btn.primary:hover {
+                background-color: var(--accent-hover);
+            }
+            button.warning {
+                background-color: var(--warning);
+                color: #fff;
+                border-color: var(--warning);
+            }
+
+            input {
+                width: 100%;
+                padding: 5px 8px;
+                background-color: var(--bg-input);
+                color: var(--text-main);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                font-size: 0.85rem;
+                transition: var(--transition);
+                font-family: inherit;
+            }
+            input:focus {
+                outline: none;
+                border-color: var(--accent-color);
+                box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            }
+
+            /* Layout Panels */
+            .panel {
+                background-color: var(--bg-panel);
+                border-radius: var(--radius);
+                padding: 8px 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                border: 1px solid var(--border-color);
+            }
+
+            /* =========================================
+           HEADER SECTION
+           ========================================= */
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-bottom: 4px;
+                border-bottom: 1px solid var(--border-color);
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            .brand-box {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .brand-logo {
+                background: linear-gradient(135deg, #0284c7, #0369a1);
+                color: white;
+                width: 34px;
+                height: 34px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.3rem;
+                box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+            }
+            .brand h1 {
+                font-size: 1.15rem;
+                font-weight: 800;
+                letter-spacing: 0.5px;
+            }
+            .brand p {
+                font-size: 0.65rem;
+                color: var(--text-muted);
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .global-controls {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            /* =========================================
+           INFOGRAPHICS & DASHBOARD METRICS
+           ========================================= */
+            .dashboard-grid {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 6px;
+            }
+            @media (max-width: 1200px) {
+                .dashboard-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+            @media (max-width: 768px) {
+                .dashboard-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            .kpi-card {
+                background: var(--bg-panel);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                padding: 8px 10px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                position: relative;
+                overflow: hidden;
+            }
+            .kpi-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: var(--accent-color);
+            }
+            .kpi-card.success::before { background: var(--success); }
+            .kpi-card.warning::before { background: var(--warning); }
+            .kpi-card.danger::before { background: var(--danger); }
+            .kpi-card.purple::before { background: var(--purple); }
+
+            .kpi-icon {
+                font-size: 1.25rem;
+                color: var(--text-muted);
+                width: 32px;
+                height: 32px;
+                background: var(--bg-input);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .kpi-data {
+                flex: 1;
+                min-width: 0;
+            }
+            .kpi-value {
+                font-size: 1.25rem;
+                font-weight: 800;
+                line-height: 1.1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .kpi-card .kpi-label {
+                font-size: 0.65rem;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* Visual Chart Bar Components */
+            .chart-panel {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 12px;
+                padding: 6px 12px;
+            }
+            .progress-segment-container {
+                display: flex;
+                height: 16px;
+                border-radius: var(--radius);
+                overflow: hidden;
+                background: var(--bg-input);
+                margin-top: 3px;
+                border: 1px solid var(--border-color);
+            }
+            .progress-segment {
+                height: 100%;
+                transition: width 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 0.7rem;
+                font-weight: bold;
+            }
+
+            /* =========================================
+           CORE DISPLAY WORKSPACE (MAXIMIZED VIEW)
+           ========================================= */
+            .workspace-layout {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 8px;
+                flex: 1;
+                min-height: 0;
+            }
+            .workspace-layout .panel {
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+            }
+
+            /* =========================================
+           TABLES & PREVIEW DATA MODULES
+           ========================================= */
+            .table-wrapper {
+                flex: 1;
+                overflow-y: auto;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                background: var(--bg-panel);
+                transition: var(--transition);
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.8rem;
+                text-align: left;
+            }
+            th, td {
+                padding: 6px 8px;
+                border-bottom: 1px solid var(--border-color);
+            }
+            th {
+                background-color: var(--bg-input);
+                font-weight: 600;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+            tbody tr:hover {
+                background-color: rgba(255, 255, 255, 0.01);
+            }
+            [data-theme="light"] tbody tr:hover {
+                background-color: rgba(0, 0, 0, 0.01);
+            }
+            .badge-ui {
+                display: inline-block;
+                padding: 1px 5px;
+                border-radius: 4px;
+                font-size: 0.7rem;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+            .badge-ui.present { background: rgba(46, 204, 113, 0.2); color: var(--success); }
+            .badge-ui.leave { background: rgba(241, 196, 15, 0.2); color: var(--warning); }
+            .badge-ui.absent { background: rgba(231, 76, 60, 0.2); color: var(--danger); }
+            .badge-ui.restday { background: rgba(155, 89, 182, 0.2); color: var(--purple); }
+
+            /* =========================================
+           MODALS OVERLAYS & PORTALS
+           ========================================= */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.65);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                backdrop-filter: blur(3px);
+            }
+            .modal-overlay.active { display: flex; }
+            .modal-content {
+                background: var(--bg-body);
+                width: 92%;
+                max-width: 1000px;
+                max-height: 85vh;
+                border-radius: var(--radius);
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+                border: 1px solid var(--border-color);
+            }
+            .modal-header {
+                padding: 10px 14px;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: var(--bg-panel);
+            }
+            .modal-body {
+                padding: 14px;
+                overflow-y: auto;
+                flex: 1;
+            }
+            .close-modal {
+                background: none;
+                border: none;
+                font-size: 1.3rem;
+                color: var(--text-muted);
+                cursor: pointer;
+            }
+            .close-modal:hover { color: var(--danger); }
+
+            /* Analytics UI Layout Blocks */
+            .analytics-summary-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 14px;
+            }
+            .stat-box {
+                background: var(--bg-input);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                padding: 10px;
+            }
+            .stat-box-title {
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                font-weight: 700;
+                margin-bottom: 4px;
+            }
+            .stat-box-value { font-size: 1.5rem; font-weight: 800; }
+
+            /* Collapsible Readme Details Layout Block Styles */
+            .readme-details {
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                margin-bottom: 8px;
+                background: var(--bg-panel);
+                overflow: hidden;
+            }
+            .readme-summary {
+                padding: 8px 12px;
+                font-weight: 600;
+                font-size: 0.85rem;
+                cursor: pointer;
+                background: var(--bg-input);
+                color: var(--text-main);
+                user-select: none;
+                outline: none;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .readme-summary::before {
+                content: "\f0da";
+                font-family: "Font Awesome 6 Free";
+                font-weight: 900;
+                transition: transform 0.2s ease;
+                display: inline-block;
+                width: 12px;
+            }
+            .readme-details[open] .readme-summary::before { transform: rotate(90deg); }
+            .readme-content {
+                padding: 10px 14px 4px 14px;
+                font-size: 0.8rem;
+                line-height: 1.45;
+                color: var(--text-main);
+            }
+            .readme-highlight { color: var(--accent-color); font-weight: 600; }
+
+            /* Excel Search Bar Elements Extension Styles */
+            .excel-search-bar-container {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: var(--bg-input);
+                border: 1px solid var(--border-color);
+                padding: 6px 10px;
+                border-radius: var(--radius);
+                margin-bottom: 10px;
+                box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            }
+            .excel-search-bar-container i { color: var(--text-muted); font-size: 0.9rem; }
+            .excel-search-bar-container input {
+                border: none !important;
+                background: transparent !important;
+                padding: 2px 0px !important;
+                font-size: 0.85rem;
+                box-shadow: none !important;
+                width: 100%;
+                color: var(--text-main);
+            }
+
+            /* =========================================
+           FOOTER ANNOUNCEMENTS MARQUEE
+           ========================================= */
+            footer {
+                background-color: var(--bg-panel);
+                border-top: 1px solid var(--border-color);
+                padding: 4px 12px;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                font-size: 0.75rem;
+                height: 26px;
+            }
+            .marquee-wrapper {
+                flex: 1;
+                overflow: hidden;
+                white-space: nowrap;
+                border-left: 2px solid var(--accent-color);
+                padding-left: 10px;
+            }
+            .marquee {
+                display: inline-block;
+                animation: scroll-text 30s linear infinite;
+            }
+            @keyframes scroll-text {
+                0% { transform: translateX(100%); }
+                100% { transform: translateX(-100%); }
+            }
+
+            #toast-container {
+                position: fixed;
+                bottom: 35px;
+                right: 20px;
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+            .toast {
+                min-width: 260px;
+                padding: 8px 12px;
+                background-color: var(--bg-panel);
+                color: var(--text-main);
+                border-left: 4px solid var(--accent-color);
+                border-radius: var(--radius);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.8rem;
+            }
+            .toast.error { border-color: var(--danger); }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <div class="brand-box">
+                    <div class="brand-logo"><i class="fa-solid fa-chart-column"></i></div>
+                    <div class="brand">
+                        <h1>Team Attendance Dashboard</h1>
+                        <p>Operations Team Attendance Mapping</p>
                     </div>
                 </div>
+                <div class="global-controls">
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-                    <div style="font-size: 0.875rem; color: var(--text-secondary);" id="ledgerRecordCount">
-                        Loaded Records: 0
+                    <div style="display: flex; align-items: center; gap: 4px; background: var(--bg-panel); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: var(--radius);">
+                        <label for="record-date" style="margin: 0; font-size: 0.75rem; font-weight: 700; white-space: nowrap; color: var(--text-muted);">View Horizon Date:</label>
+                        <input type="date" id="record-date" style="padding: 2px 4px; font-size: 0.8rem; border: none; width: auto; background: transparent;" />
                     </div>
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                        <button class="btn btn-primary" id="btnExportCSV"><i class="fa-solid fa-file-export"></i> Export CSV</button>
-                        <button class="btn btn-danger" id="btnPurgeSelectedTrigger" disabled><i class="fa-solid fa-check-square"></i> Purge Selected (<span id="selectedCount">0</span>)</button>
-                        <button class="btn btn-danger" id="btnPurgeFilteredTrigger"><i class="fa-solid fa-filter-circle-xmark"></i> Purge Filtered (<span id="filteredPurgeCount">0</span>)</button>
-                        <button class="btn btn-danger" id="btnPurgeTrigger"><i class="fa-solid fa-trash-can"></i> Purge All Ledger</button>
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <table id="ledgerTable">
-                        <thead>
-                            <tr id="ledgerTableHeader">
-                                <th style="width: 40px; text-align: center;"><input type="checkbox" id="selectAllCheckbox" class="row-checkbox" title="Select All On Page"></th>
-                                <th>#</th>
-                                <th>YEAR</th>
-                                <th>DATE</th>
-                                <th>MONTH</th>
-                                <th>CHANNEL</th>
-                                <th>NAME</th>
-                                <th>DIRECTION</th>
-                                <th>COUNTRY</th>
-                                <th>MAIN REASON</th>
-                                <th>SUB REASON</th>
-                                <th>CATEGORY</th>
-                                <th>SUBCATEGORY</th>
-                                <th>MODEL</th>
-                                <th>DISPOSITION</th>
-                                <th>TYPE</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ledgerTableBody"></tbody>
-                    </table>
-                </div>
-
-                <div class="pagination-bar">
-                    <span id="pageInfo" style="font-size: 0.85rem; color: var(--text-secondary);">Page 1 of 1</span>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn" id="btnPrevPage"><i class="fa-solid fa-chevron-left"></i> Previous</button>
-                        <button class="btn" id="btnNextPage">Next <i class="fa-solid fa-chevron-right"></i></button>
+                    <button class="primary" onclick="toggleModal('trend-monitor-modal')">
+                        <i class="fa-solid fa-chart-line"></i> Agent Trend Monitor
+                    </button>
+                    <button class="primary" onclick="toggleModal('compliance-notifier-modal')">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Compliance Notifier
+                    </button>
+                    <button class="primary" onclick="toggleModal('history-modal')">
+                        <i class="fa-solid fa-table-list"></i> Master Logs View
+                    </button>
+                    <button class="warning" onclick="toggleModal('readme-guide-modal')">
+                        <i class="fa-solid fa-book-open"></i> View Guide
+                    </button>
+                    <button onclick="toggleTheme()" id="theme-btn" title="Toggle Theme">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                    <div style="display: flex; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-color);">
+                        <button style="border: none; border-radius: 0; padding: 4px 8px" onclick="adjustFontSize(-2)"><i class="fas fa-minus"></i></button>
+                        <button style="border: none; border-radius: 0; padding: 4px 8px; background: var(--bg-panel)" onclick="resetFontSize()"><i class="fas fa-font"></i></button>
+                        <button style="border: none; border-radius: 0; padding: 4px 8px" onclick="adjustFontSize(2)"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
+            </header>
+
+            <section class="dashboard-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="count-total">0</div>
+                        <div class="kpi-label">Active Pool of Agents</div>
+                    </div>
+                </div>
+                <div class="kpi-card success">
+                    <div class="kpi-icon" style="color: var(--success)"><i class="fa-solid fa-user-check"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="count-present">0</div>
+                        <div class="kpi-label">Present (IN)</div>
+                    </div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-icon" style="color: var(--purple)"><i class="fa-solid fa-bed"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="count-restDay">0</div>
+                        <div class="kpi-label">Rest Day</div>
+                    </div>
+                </div>
+                <div class="kpi-card danger">
+                    <div class="kpi-icon" style="color: var(--danger)"><i class="fa-solid fa-times"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="count-absent">0</div>
+                        <div class="kpi-label">Absent (A- / LWOP)</div>
+                    </div>
+                </div>
+                <div class="kpi-card warning">
+                    <div class="kpi-icon" style="color: var(--warning)"><i class="fa-solid fa-plane-departure"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="count-leave">0</div>
+                        <div class="kpi-label">On Leave Status</div>
+                    </div>
+                </div>
+                <div class="kpi-card danger">
+                    <div class="kpi-icon" style="color: var(--danger)"><i class="fa-solid fa-business-time"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="total-late">0m</div>
+                        <div class="kpi-label">Cumulative Tardiness</div>
+                    </div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-icon" style="color: var(--purple)"><i class="fa-solid fa-mug-hot"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="total-overbreaks">0m</div>
+                        <div class="kpi-label">Cumulative Overbreaks</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel chart-panel">
+                <div>
+                    <h4 style="font-size: 0.85rem">Daily Breakdown Distribution</h4>
+                    <div class="progress-segment-container" id="distribution-bar"></div>
+                </div>
+                <div>
+                    <h4 style="font-size: 0.85rem">Pool Coverage Rate</h4>
+                    <div style="font-size: 1.1rem; font-weight: 800; margin-top: 1px" id="coverage-percentage">0%</div>
+                </div>
+            </section>
+
+            <div class="workspace-layout">
+                <section class="panel">
+                    <h3 style="margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span>Live Operational Stream View</span>
+					<div id="live-clock"></div>
+                        <small style="font-size: 0.75rem; color: var(--accent-color); font-weight: normal;"><i class="fa-solid fa-globe"></i> Synchronized with repository masterfile; overrides stored in browser's localStorage; </small>
+                    </h3>
+                    <div class="table-wrapper">
+                        <table id="stream-table">
+                            <thead>
+                                <tr>
+                                    <th>Recorded Date</th>
+                                    <th>Agent Name</th>
+                                    <th>Status Badging</th>
+                                    <th>Metrics Context Summary</th>
+                                    <th>Remarks Tracking Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stream-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeModal('modalMasterLedger')">Close</button>
+
+            <footer>
+                <div style="font-weight: bold; white-space: nowrap">System Board Ticker:</div>
+                <div class="marquee-wrapper">
+                    <div class="marquee">
+                        <strong>Online Mode:</strong> Automatically loading <em>attendance-masterfile.csv</em> from GitHub repository. Upload an updated CSV file to temporarily override active session cache.
+                    </div>
+                </div>
+                    <div style="display: flex; align-items: center; gap: 4px; padding: 2px 6px;">
+                        <label class="btn primary" for="csv-file-picker">
+                            <i class="fa-solid fa-file-csv"></i> Upload Updated CSV
+                        </label>
+                        <input type="file" id="csv-file-picker" accept=".csv" style="display: none;" />
+                        <span id="file-status-label" style="font-size: 0.75rem; color: var(--text-muted); padding: 0 4px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Using Repo Default</span>
+                    </div>
+            </footer>
+        </div>
+
+        <div class="modal-overlay" id="trend-monitor-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-chart-line" style="color: var(--accent-color)"></i> Agent Behavioral Pattern Trend Monitor</h3>
+                    <button class="close-modal" onclick="toggleModal('trend-monitor-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-wrapper" style="max-height: 60vh">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Agent Entity Name</th>
+                                    <th>Loss Metric Footprints</th>
+                                    <th>Attendance Patterns</th>
+                                    <th>Approved Leave Logs</th>
+                                    <th>Unscheduled / Absent Logs</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trend-monitor-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- PURGE MODAL -->
-    <div class="modal-overlay" id="modalPurgeAuth">
-        <div class="modal-container" style="max-width: 440px;">
-            <div class="modal-header">
-                <div class="chart-title" style="color: var(--danger-color);"><i class="fa-solid fa-shield-halved"></i> Security Verification</div>
-                <button class="btn" onclick="closeModal('modalPurgeAuth')"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body" style="text-align: center;">
-                <i class="fa-solid fa-lock" style="font-size: 2.5rem; color: var(--warning-color); margin-bottom: 1rem;"></i>
-                <p id="purgeDescription" style="margin-bottom: 1rem; font-size: 0.9rem;">To clear all dataset entries from local storage, enter the authorization passcode:</p>
-                <input type="password" id="purgePassword" placeholder="Enter Masked Password" style="width: 100%; text-align: center; font-size: 1.1rem; letter-spacing: 3px;">
-                <p id="purgeErrorMsg" style="color: var(--danger-color); font-size: 0.8rem; margin-top: 0.5rem; display: none;">Invalid Password!</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeModal('modalPurgeAuth')">Cancel</button>
-                <button class="btn btn-danger" id="btnConfirmPurge">Confirm Purge</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- INFOGRAPHIC VIEW MODAL -->
-    <div class="modal-overlay" id="modalGenericView">
-        <div class="modal-container" style="max-width: 1050px;">
-            <div class="modal-header">
-                <div class="chart-title" id="genericModalTitle">Infographic Analytics</div>
-                <button class="btn" onclick="closeModal('modalGenericView')"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body" id="genericModalBody"></div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeModal('modalGenericView')">Close</button>
+        <div class="modal-overlay" id="compliance-notifier-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-triangle-exclamation" style="color: var(--danger)"></i> Operations Parameter Compliance Notifier</h3>
+                    <button class="close-modal" onclick="toggleModal('compliance-notifier-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <blockquote style="background: rgba(231, 76, 60, 0.08); border-left: 4px solid var(--danger); padding: 8px; font-size: 0.8rem; border-radius: var(--radius); margin-bottom: 6px;">
+                        <strong>PROVISIONAL OPERATIONS NOTICE:</strong> Evaluated infractions reflect guidelines that are subject to adjustment pending formal HR validation. Evaluation checks occur within the target calendar frame; associated dynamic <strong>Notice To Explain (NTE)</strong> generation processes occur during the subsequent month following performance lapses.
+                    </blockquote>
+                    <div class="table-wrapper" style="max-height: 55vh">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Agent Name</th>
+                                    <th>Tardiness/OB Threshold Status</th>
+                                    <th>Absence Threshold Status</th>
+                                    <th>Compliance Risk Evaluation Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="compliance-notifier-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        let dataset = [];
-        let selectedIndices = new Set();
-        let currentPurgeMode = 'ALL'; // 'ALL', 'FILTERED', or 'SELECTED'
-        let fontScale = 100;
-        let currentPage = 1;
-        const pageSize = 100;
-        const PASSCODE = "031825";
+        <div class="modal-overlay" id="history-modal">
+            <div class="modal-content" style="max-width: 1100px">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-color)"></i> Master Tracking Logs Ledger View</h3>
+                    <button class="close-modal" onclick="toggleModal('history-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="excel-search-bar-container">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input 
+                            type="text" 
+                            id="master-excel-search" 
+                            placeholder="Search logs by Agent, Status, Date or Keyword (Excel-style instant filter)..." 
+                            oninput="filterMasterLedgerGrid()"
+                        />
+                    </div>
+					<button onclick="purgeLocalStorage()" title="Purge cached data" style="color:red;">
+						<i class="fa-solid fa-trash"></i> Purge Cached Data
+					</button>
+                    <div class="table-wrapper" style="max-height: 58vh">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Agent</th>
+                                    <th>Status</th>
+                                    <th>Metrics/Taggings Fields</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="master-modal-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        const MONTH_ORDER = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
-        
-        const INVALID_VALUES = [
-            'N/A', 'NA', 'NONE', 'UNKNOWN', 'UNABLE TO GET THE MODEL', 
-            'UNABLE TO GET MODEL', 'UNDEFINED', 'NULL', 'OTHER', ''
-        ];
+        <div class="modal-overlay" id="readme-guide-modal">
+            <div class="modal-content" style="max-width: 800px">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-book" style="color: var(--warning)"></i> Dashboard Monitoring Guide</h3>
+                    <button class="close-modal" onclick="toggleModal('readme-guide-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <details class="readme-details" open>
+                        <summary class="readme-summary">1. Online Masterfile Fetching & Manual Upload</summary>
+                        <div class="readme-content">
+                            <p>This web dashboard automatically fetches the latest <strong>attendance-masterfile.csv</strong> hosted in your repository on startup.</p>
+                            <p style="margin-top: 6px;"><strong>Manual Override Option:</strong></p>
+                            <p style="margin-top: 4px; font-size: 0.78rem; color: var(--text-muted);">If you need to analyze an uncommitted local dataset, click the <strong>Upload Updated CSV</strong> button in the footer bar. Custom uploaded files persist in your local browser cache until purged.</p>
+                        </div>
+                    </details>
+                    <details class="readme-details">
+                        <summary class="readme-summary">2. Real-Time View & Excel Filtering</summary>
+                        <div class="readme-content">
+                            <p>Use the global navigation control panel headers to step backward or forward along your calendar track timeline view matrix. Clicking into the <strong>Master Logs View</strong> dashboard opens an instant querying search window engine built to look up values identically to spreadsheet filtering models.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
 
-        const EXPECTED_HEADERS = [
-            "YEAR", "DATE", "MONTH", "CHANNEL", "NAME", "DIRECTION", 
-            "COUNTRY", "MAINREASON", "SUBREASON", "CATEGORY", 
-            "SUBCATEGORY", "MODEL", "DISPOSITION", "TYPE"
-        ];
+        <div id="toast-container"></div>
 
-        const dbName = "AnalyticsDB";
-        const storeName = "MasterData";
+        <script>
+            (function () {
+                "use strict";
 
-        function openDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(dbName, 1);
-                request.onupgradeneeded = e => {
-                    const db = e.target.result;
-                    if (!db.objectStoreNames.contains(storeName)) {
-                        db.createObjectStore(storeName);
+                // Global Operational Database State
+				let database = [];
+				const agentPoolList = [
+					"Abrio, Bernadette", "Abulencia, Alvina", "Alibadbad, Precy",
+					"Arguelles, Marc Ainsley", "Avanzado, Maria Teresita", "Bachiller, Romeo Marvin",
+					"Biojon, James Carlo", "Boquiña, Princess", "Buhat, Cherry",
+					"Dilla, John Dominique", "Fernandez, Dennis", "Gabac, Philip",
+					"Igual, Tristan John", "Jabson, Denisse Gayle", "Orbon, Kathleen Mae",
+					"Rodriguez, Shairaine", "Sumalinog, Jhomer"
+				];
+
+                // Standardized Date Normalization Engine to handle dynamic CSV formats (YYYY-MM-DD, MM/DD/YYYY, M/D/YYYY)
+                function normalizeDateString(dateStr) {
+                    if (!dateStr) return "";
+                    let cleanStr = dateStr.trim().replace(/^"|"$/g, "");
+                    if (!cleanStr) return "";
+
+                    // If already YYYY-MM-DD
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(cleanStr)) {
+                        return cleanStr;
+                    }
+
+                    // Check for standard JS readable formats or forward slashes
+                    let parts = cleanStr.split(/[\/\-\.]/);
+                    if (parts.length === 3) {
+                        let p1 = parseInt(parts[0], 10);
+                        let p2 = parseInt(parts[1], 10);
+                        let p3 = parseInt(parts[2], 10);
+
+                        if (!isNaN(p1) && !isNaN(p2) && !isNaN(p3)) {
+                            // YYYY/MM/DD or YYYY-MM-DD
+                            if (parts[0].length === 4) {
+                                let y = p1;
+                                let m = String(p2).padStart(2, '0');
+                                let d = String(p3).padStart(2, '0');
+                                return `${y}-${m}-${d}`;
+                            } 
+                            // MM/DD/YYYY or M/D/YYYY
+                            else if (parts[2].length === 4) {
+                                let y = p3;
+                                let m = String(p1).padStart(2, '0');
+                                let d = String(p2).padStart(2, '0');
+                                return `${y}-${m}-${d}`;
+                            }
+                        }
+                    }
+
+                    // Native fallback parser
+                    let dObj = new Date(cleanStr);
+                    if (!isNaN(dObj.getTime())) {
+                        let y = dObj.getFullYear();
+                        let m = String(dObj.getMonth() + 1).padStart(2, '0');
+                        let d = String(dObj.getDate()).padStart(2, '0');
+                        return `${y}-${m}-${d}`;
+                    }
+
+                    return cleanStr;
+                }
+
+				// Purge function
+				window.purgeLocalStorage = function() {
+					if (confirm("Are you sure you want to clear the cached dataset? The app will re-fetch the raw repository file upon reloading.")) {
+						localStorage.removeItem("attendance_masterfile_data");
+						database = [];
+						location.reload();
+					}
+				};
+
+                // Fetch default CSV from the repository root
+                async function fetchDefaultCSV() {
+                    try {
+                        const response = await fetch('./attendance-masterfile.csv');
+                        if (!response.ok) {
+                            throw new Error(`Failed to load default CSV (${response.status} ${response.statusText})`);
+                        }
+                        const textPayload = await response.text();
+                        parseCSVDatabasePayload(textPayload);
+                        refreshDashboardUI();
+                        showToast("Loaded repository attendance-masterfile.csv", "success");
+                    } catch (err) {
+                        console.error(err);
+                        showToast("Could not fetch default CSV. Upload an updated CSV manually.", "error");
+                        refreshDashboardUI();
+                    }
+                }
+
+                // Manual File Ingestion Core Pipeline Process Logic Handler
+				function handleManualCSVUpload(event) {
+					const parsedTargetFile = event.target.files[0];
+					if (!parsedTargetFile) return;
+
+					document.getElementById("file-status-label").textContent = parsedTargetFile.name;
+
+					const fileReaderEngine = new FileReader();
+					fileReaderEngine.onload = function (e) {
+						const textPayload = e.target.result;
+						
+						localStorage.setItem("attendance_masterfile_data", textPayload);
+						database = []; // Reset existing local database array before parsing complete fresh batch
+						parseCSVDatabasePayload(textPayload);
+						
+						refreshDashboardUI();
+						showToast("Database synchronized and saved to browser storage.", "success");
+					};
+					fileReaderEngine.readAsText(parsedTargetFile);
+				}
+
+                // Dashboard Initializer Hooks Pipeline
+				document.addEventListener("DOMContentLoaded", () => {
+					initTheme();
+					initClock();
+					initFontSize();
+					
+					const todayStr = new Date().toISOString().split('T')[0];
+					document.getElementById("record-date").value = todayStr;
+					document.getElementById("record-date").addEventListener("change", refreshDashboardUI);
+					
+					document.getElementById("csv-file-picker").addEventListener("change", handleManualCSVUpload);
+
+					// PERSISTENCE: Load from storage if available, otherwise fetch repository CSV directly
+					const savedData = localStorage.getItem("attendance_masterfile_data");
+					if (savedData) {
+						parseCSVDatabasePayload(savedData);
+                        document.getElementById("file-status-label").textContent = "Cached Local File";
+						showToast("Restored dataset from local storage.", "success");
+                        refreshDashboardUI();
+					} else {
+                        fetchDefaultCSV();
+                    }
+				});
+
+				function parseCSVDatabasePayload(csvText) {
+					const lines = csvText.split(/\r?\n/);
+					const existingKeys = new Set(database.map(d => `${d.date}|${d.empName}`));
+
+					for (let i = 1; i < lines.length; i++) {
+						const rowLine = lines[i].trim();
+						if (!rowLine) continue;
+
+						const segments = rowLine.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+						if (segments.length >= 3) {
+							const rawDate = segments[0].trim();
+                            const date = normalizeDateString(rawDate);
+							const empName = segments[1].replace(/^"|"$/g, "").trim();
+							
+							// Duplicate Check
+							const uniqueKey = `${date}|${empName}`;
+							if (existingKeys.has(uniqueKey)) continue;
+
+							const status = segments[2].trim();
+							let metrics = {};
+							if (status === "Present") {
+								metrics.lateMins = parseInt(segments[3]) || 0;
+								metrics.obMins = parseInt(segments[4]) || 0;
+							} else if (status === "Leave") {
+								metrics.leaveType = segments[5] ? segments[5].replace(/^"|"$/g, "") : "Sick leave";
+								metrics.leaveDays = parseFloat(segments[6]) || 1;
+							}
+
+							const remarks = segments[7] ? segments[7].replace(/^"|"$/g, "") : "";
+
+							database.push({
+								uuid: "id_" + i + "_" + Date.now(),
+								date,
+								empName,
+								status,
+								metrics,
+								remarks
+							});
+							
+							existingKeys.add(uniqueKey);
+						}
+					}
+				}
+
+                window.showToast = function (message, type = "error") {
+                    const container = document.getElementById("toast-container");
+                    const toast = document.createElement("div");
+                    toast.className = `toast ${type}`;
+                    toast.innerHTML = `<span>${message}</span><button style="background:none; border:none; color:inherit; font-size:1.1rem; cursor:pointer;" onclick="this.parentElement.remove()">&times;</button>`;
+                    container.appendChild(toast);
+                    setTimeout(() => { toast.remove(); }, 6000);
+                };
+
+                // UI Layout Theming & Typography Adjustments Engine Code
+                window.toggleTheme = function () {
+                    const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+                    const targetTheme = currentTheme === "dark" ? "light" : "dark";
+                    document.documentElement.setAttribute("data-theme", targetTheme);
+                    localStorage.setItem("uiTheme_dash", targetTheme);
+                    updateThemeIcon(targetTheme);
+                };
+
+                function initTheme() {
+                    const activePersistedTheme = localStorage.getItem("uiTheme_dash") || "dark";
+                    document.documentElement.setAttribute("data-theme", activePersistedTheme);
+                    updateThemeIcon(activePersistedTheme);
+                }
+
+                function updateThemeIcon(theme) {
+                    const icon = document.getElementById("theme-btn").querySelector("i");
+                    icon.className = theme === "light" ? "fa-solid fa-sun" : "fa-solid fa-moon";
+                }
+
+                function initClock() {
+                    const clock = document.getElementById("live-clock");
+                    setInterval(() => {
+                        clock.textContent = new Date().toLocaleString("en-US", {
+                            weekday: "long", year: "numeric", month: "long", day: "numeric",
+                            hour: "numeric", minute: "numeric", second: "numeric", hour12: true
+                        });
+                    }, 1000);
+                }
+
+                function initFontSize() {
+                    let currentDelta = parseFloat(localStorage.getItem("fontSizeDelta_dash")) || 0;
+                    document.documentElement.style.setProperty("--base-font-size", 14 + currentDelta + "px");
+                }
+
+                window.adjustFontSize = function (amount) {
+                    let currentDelta = (parseFloat(localStorage.getItem("fontSizeDelta_dash")) || 0) + amount;
+                    if (currentDelta < -4) currentDelta = -4;
+                    if (currentDelta > 8) currentDelta = 8;
+                    localStorage.setItem("fontSizeDelta_dash", currentDelta);
+                    document.documentElement.style.setProperty("--base-font-size", 14 + currentDelta + "px");
+                };
+
+                window.resetFontSize = function () {
+                    localStorage.setItem("fontSizeDelta_dash", 0);
+                    document.documentElement.style.setProperty("--base-font-size", "14px");
+                };
+
+                window.toggleModal = function (modalId) {
+                    const modal = document.getElementById(modalId);
+                    if (!modal) return;
+                    modal.classList.toggle("active");
+
+                    if (modal.classList.contains("active")) {
+                        if (modalId === "trend-monitor-modal") compileTrendMonitorMetrics();
+                        if (modalId === "compliance-notifier-modal") compileComplianceNotifier();
+                        if (modalId === "history-modal") {
+                            document.getElementById("master-excel-search").value = "";
+                            renderMasterLedgerTable();
+                        }
                     }
                 };
-                request.onsuccess = e => resolve(e.target.result);
-                request.onerror = e => reject(e.target.error);
-            });
-        }
 
-        async function saveDatasetToIDB(data) {
-            const db = await openDB();
-            const tx = db.transaction(storeName, "readwrite");
-            const store = tx.objectStore(storeName);
-            store.put(data, "dataset");
-            return tx.complete;
-        }
+                // Analytical UI Processing Calculations 
+                function refreshDashboardUI() {
+                    const rawTargetDate = document.getElementById("record-date").value;
+                    const targetDateValue = normalizeDateString(rawTargetDate);
+                    const expectedTotalRosterCount = agentPoolList.length;
+                    document.getElementById("count-total").textContent = expectedTotalRosterCount;
 
-        async function loadDatasetFromIDB() {
-            const db = await openDB();
-            return new Promise((resolve, reject) => {
-                const tx = db.transaction(storeName, "readonly");
-                const store = tx.objectStore(storeName);
-                const req = store.get("dataset");
-                req.onsuccess = () => resolve(req.result || []);
-                req.onerror = () => reject(req.error);
-            });
-        }
+                    const dailyEntries = database.filter((rec) => normalizeDateString(rec.date) === targetDateValue);
 
-        async function clearDatasetFromIDB() {
-            const db = await openDB();
-            const tx = db.transaction(storeName, "readwrite");
-            const store = tx.objectStore(storeName);
-            store.clear();
-            return tx.complete;
-        }
+                    const presentCount = dailyEntries.filter((r) => r.status === "Present").length;
+                    const leaveCount = dailyEntries.filter((r) => r.status === "Leave").length;
+                    const absentCount = dailyEntries.filter((r) => r.status === "Absent").length;
+                    const restDayCount = dailyEntries.filter((r) => r.status === "Rest Day").length;
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            initClock();
-            initTheme();
-            initFontScale();
-            dataset = await loadDatasetFromIDB();
-            populateFilterDropdowns();
-            renderDashboard();
-            setupEventListeners();
-        });
+                    const cumulativeLateMinutes = dailyEntries.reduce((acc, curr) => acc + (curr.metrics.lateMins || 0), 0);
+                    const cumulativeOverbreaks = dailyEntries.reduce((acc, curr) => acc + (curr.metrics.obMins || 0), 0);
 
-        function initClock() {
-            const updateClock = () => {
-                const now = new Date();
-                document.getElementById('liveDateTime').innerText = now.toLocaleString('en-US', {
-                    weekday: 'short', month: 'short', day: '2-digit', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit', second: '2-digit'
-                });
-            };
-            updateClock();
-            setInterval(updateClock, 1000);
-        }
+                    document.getElementById("count-present").textContent = presentCount;
+                    document.getElementById("count-absent").textContent = absentCount;
+                    document.getElementById("count-restDay").textContent = restDayCount;
+                    document.getElementById("count-leave").textContent = leaveCount;
+                    document.getElementById("total-late").textContent = `${cumulativeLateMinutes}m`;
+                    document.getElementById("total-overbreaks").textContent = `${cumulativeOverbreaks}m`;
 
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            updateThemeIcon(savedTheme);
-        }
+                    const coverageRate = expectedTotalRosterCount > 0 ? Math.round((presentCount / expectedTotalRosterCount) * 100) : 0;
+                    document.getElementById("coverage-percentage").textContent = `${coverageRate}% Coverage`;
 
-        function updateThemeIcon(theme) {
-            const icon = document.getElementById('themeIcon');
-            icon.className = theme === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-        }
+                    const distBar = document.getElementById("distribution-bar");
+                    distBar.innerHTML = "";
 
-        function initFontScale() {
-            const savedScale = sessionStorage.getItem('fontScale');
-            if (savedScale) {
-                fontScale = parseInt(savedScale);
-                applyFontScale();
-            }
-        }
+                    if (dailyEntries.length > 0) {
+                        const pPct = (presentCount / dailyEntries.length) * 100;
+                        const lPct = (leaveCount / dailyEntries.length) * 100;
+                        const aPct = (absentCount / dailyEntries.length) * 100;
+                        const rdPct = (restDayCount / dailyEntries.length) * 100;
 
-        function applyFontScale() {
-            document.documentElement.style.setProperty('--font-scale', fontScale + '%');
-            document.getElementById('fontScaleDisplay').innerText = fontScale + '%';
-            sessionStorage.setItem('fontScale', fontScale);
-        }
-
-        function setupEventListeners() {
-            document.getElementById('btnThemeToggle').addEventListener('click', () => {
-                const currentTheme = document.documentElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                document.documentElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-                updateThemeIcon(newTheme);
-            });
-
-            document.getElementById('btnFontDec').addEventListener('click', () => {
-                if (fontScale > 80) { fontScale -= 5; applyFontScale(); }
-            });
-            document.getElementById('btnFontInc').addEventListener('click', () => {
-                if (fontScale < 130) { fontScale += 5; applyFontScale(); }
-            });
-
-            document.getElementById('btnMasterLedger').addEventListener('click', () => {
-                currentPage = 1;
-                renderLedgerTable();
-                openModal('modalMasterLedger');
-            });
-
-            document.getElementById('btnPrevPage').addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderLedgerTable();
-                }
-            });
-
-            document.getElementById('btnNextPage').addEventListener('click', () => {
-                const filtered = getFilteredLedgerData();
-                const maxPages = Math.ceil(filtered.length / pageSize) || 1;
-                if (currentPage < maxPages) {
-                    currentPage++;
-                    renderLedgerTable();
-                }
-            });
-
-            document.getElementById('btnContactAnalysis').addEventListener('click', () => {
-                openGenericModal('Infographic: Contact Driver Breakdown', generateContactAnalysisHTML());
-            });
-
-            document.getElementById('btnRegIntel').addEventListener('click', () => {
-                openGenericModal('Infographic: Regional Contact Intelligence', generateRegionalIntelHTML());
-            });
-
-            document.getElementById('btnVolComp').addEventListener('click', () => {
-                openGenericModal('Infographic: Monthly Volume Snapshot', generateVolumeCompHTML());
-            });
-
-            ['filterMonth', 'filterCountry', 'filterChannel', 'filterDirection', 'searchQuery'].forEach(id => {
-                document.getElementById(id).addEventListener('input', renderDashboard);
-            });
-
-            ['ledgerSearch', 'ledgerFilterMonth', 'ledgerFilterCountry', 'ledgerFilterChannel'].forEach(id => {
-                document.getElementById(id).addEventListener('input', () => {
-                    currentPage = 1;
-                    renderLedgerTable();
-                });
-            });
-
-            document.getElementById('selectAllCheckbox').addEventListener('change', (e) => {
-                const isChecked = e.target.checked;
-                const filtered = getFilteredLedgerData();
-                const startIdx = (currentPage - 1) * pageSize;
-                const endIdx = startIdx + pageSize;
-                const pageItems = filtered.slice(startIdx, endIdx);
-
-                pageItems.forEach(item => {
-                    if (isChecked) {
-                        selectedIndices.add(item._originalIndex);
-                    } else {
-                        selectedIndices.delete(item._originalIndex);
-                    }
-                });
-                renderLedgerTable();
-            });
-
-            const csvInput = document.getElementById('csvFileInput');
-            csvInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) parseCSVFile(e.target.files[0]);
-            });
-
-            const dropzone = document.getElementById('dropzone');
-            dropzone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropzone.classList.add('dragover');
-            });
-            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-            dropzone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropzone.classList.remove('dragover');
-                if (e.dataTransfer.files.length > 0) parseCSVFile(e.dataTransfer.files[0]);
-            });
-
-            document.getElementById('btnExportCSV').addEventListener('click', exportDatasetToCSV);
-
-            // PURGE TRIGGER HANDLERS
-            document.getElementById('btnPurgeTrigger').addEventListener('click', () => {
-                currentPurgeMode = 'ALL';
-                document.getElementById('purgeDescription').innerText = `To clear ALL ${dataset.length.toLocaleString()} master ledger records from storage, enter passcode:`;
-                openPurgeAuthModal();
-            });
-
-            document.getElementById('btnPurgeFilteredTrigger').addEventListener('click', () => {
-                const filtered = getFilteredLedgerData();
-                if (filtered.length === 0) return;
-                currentPurgeMode = 'FILTERED';
-                document.getElementById('purgeDescription').innerText = `To purge ${filtered.length.toLocaleString()} currently filtered records, enter passcode:`;
-                openPurgeAuthModal();
-            });
-
-            document.getElementById('btnPurgeSelectedTrigger').addEventListener('click', () => {
-                if (selectedIndices.size === 0) return;
-                currentPurgeMode = 'SELECTED';
-                document.getElementById('purgeDescription').innerText = `To purge ${selectedIndices.size.toLocaleString()} selected records, enter passcode:`;
-                openPurgeAuthModal();
-            });
-
-            document.getElementById('btnConfirmPurge').addEventListener('click', async () => {
-                const pass = document.getElementById('purgePassword').value;
-                if (pass === PASSCODE) {
-                    if (currentPurgeMode === 'ALL') {
-                        dataset = [];
-                        selectedIndices.clear();
-                        await clearDatasetFromIDB();
-                    } else if (currentPurgeMode === 'FILTERED') {
-                        const filteredOriginalIndices = new Set(getFilteredLedgerData().map(r => r._originalIndex));
-                        dataset = dataset.filter((_, idx) => !filteredOriginalIndices.has(idx));
-                        selectedIndices.clear();
-                        await saveDatasetToIDB(dataset);
-                    } else if (currentPurgeMode === 'SELECTED') {
-                        dataset = dataset.filter((_, idx) => !selectedIndices.has(idx));
-                        selectedIndices.clear();
-                        await saveDatasetToIDB(dataset);
+                        if (pPct > 0) distBar.innerHTML += `<div class="progress-segment" style="width: ${pPct}%; background: var(--success);">IN</div>`;
+                        if (lPct > 0) distBar.innerHTML += `<div class="progress-segment" style="width: ${lPct}%; background: var(--warning);">LV</div>`;
+                        if (aPct > 0) distBar.innerHTML += `<div class="progress-segment" style="width: ${aPct}%; background: var(--danger);">AB</div>`;
+                        if (rdPct > 0) distBar.innerHTML += `<div class="progress-segment" style="width: ${rdPct}%; background: var(--purple);">RD</div>`;
                     }
 
-                    populateFilterDropdowns();
-                    renderDashboard();
-                    renderLedgerTable();
-                    closeModal('modalPurgeAuth');
-                    alert('Purge operation completed successfully.');
-                } else {
-                    document.getElementById('purgeErrorMsg').style.display = 'block';
-                }
-            });
-        }
+                    const streamBody = document.getElementById("stream-table-body");
+                    streamBody.innerHTML = "";
 
-        function openPurgeAuthModal() {
-            document.getElementById('purgePassword').value = '';
-            document.getElementById('purgeErrorMsg').style.display = 'none';
-            openModal('modalPurgeAuth');
-        }
+                    if (database.length === 0) {
+                        streamBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--warning); padding: 24px; font-weight: 600;"><i class="fa-solid fa-spinner fa-spin"></i> Synchronizing masterfile or no data available...</td></tr>`;
+                        return;
+                    }
 
-        function parseCSVFile(file) {
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const text = e.target.result;
-                const rows = parseDelimitedText(text);
-                if (rows.length < 2) {
-                    alert('Invalid CSV file or empty dataset.');
-                    return;
-                }
+                    if (dailyEntries.length === 0) {
+                        streamBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">No tracking entries logged for this specific target timeline horizon folder segment.</td></tr>`;
+                        return;
+                    }
 
-                const fileHeaders = rows[0].map(h => h.trim().toUpperCase().replace(/[^A-Z0-9]/g, ''));
-                const parsedData = [];
+                    dailyEntries.forEach((log) => {
+                        let contextualSummary = "—";
+                        if (log.status === "Present") {
+                            contextualSummary = `Tardiness: ${log.metrics.lateMins || 0}m | OB: ${log.metrics.obMins || 0}m`;
+                        } else if (log.status === "Leave") {
+                            contextualSummary = `${log.metrics.leaveType} (${log.metrics.leaveDays}d)`;
+                        } else if (log.status === "Rest Day") {
+                            contextualSummary = "Off Day";
+                        }
 
-                for (let i = 1; i < rows.length; i++) {
-                    const row = rows[i];
-                    if (row.length === 0 || (row.length === 1 && !row[0].trim())) continue;
-                    
-                    let obj = {};
-                    fileHeaders.forEach((h, idx) => {
-                        obj[h] = row[idx] ? row[idx].trim() : '';
+                        const badgeClass = log.status === "Rest Day" ? "restday" : log.status.toLowerCase();
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><span style="font-family: monospace;">${log.date}</span></td>
+                            <td><strong>${log.empName}</strong></td>
+                            <td><span class="badge-ui ${badgeClass}">${log.status}</span></td>
+                            <td><small>${contextualSummary}</small></td>
+                            <td><span style="color:var(--text-muted); font-size:0.75rem;">${log.remarks || "—"}</span></td>
+                        `;
+                        streamBody.appendChild(tr);
                     });
-                    parsedData.push(obj);
                 }
 
-                dataset = parsedData;
-                selectedIndices.clear();
-                await saveDatasetToIDB(dataset);
-                populateFilterDropdowns();
-                renderDashboard();
-                renderLedgerTable();
-                alert(`Successfully imported ${parsedData.length.toLocaleString()} records.`);
-            };
-            reader.readAsText(file);
-        }
+                function compileTrendMonitorMetrics() {
+                    const rawTargetDate = document.getElementById("record-date").value || new Date().toISOString().split('T')[0];
+                    const normalizedTargetDate = normalizeDateString(rawTargetDate);
+                    const validationMonthStr = normalizedTargetDate.slice(0, 7);
 
-        function parseDelimitedText(text) {
-            const lines = text.split(/\r\n|\n/);
-            if (lines.length === 0) return [];
+                    const trendBody = document.getElementById("trend-monitor-table-body");
+                    trendBody.innerHTML = "";
 
-            let delimiter = ',';
-            for (let line of lines) {
-                if (line.trim()) {
-                    const tabCount = (line.match(/\t/g) || []).length;
-                    const commaCount = (line.match(/,/g) || []).length;
-                    if (tabCount > commaCount) delimiter = '\t';
-                    break;
+                    const monthlyRecords = database.filter((rec) => normalizeDateString(rec.date).startsWith(validationMonthStr));
+
+                    agentPoolList.forEach((agentName) => {
+                        const agentLogs = monthlyRecords.filter((rec) => rec.empName === agentName);
+                        let totalTardiness = 0, totalOverbreaks = 0, criticalLeaveDays = 0, unscheduledLeaveDays = 0;
+
+                        agentLogs.forEach((log) => {
+                            if (log.status === "Present" && log.metrics) {
+                                totalTardiness += log.metrics.lateMins || 0;
+                                totalOverbreaks += log.metrics.obMins || 0;
+                            } else if (log.status === "Leave" && log.metrics) {
+                                const type = log.metrics.leaveType || "";
+                                const days = log.metrics.leaveDays || 1;
+                                if (type === "Vacation leave" || type === "Sick leave") criticalLeaveDays += days;
+                                else if (type === "VL+ (non-emergency)" || type === "SL+ (health/emergency)") unscheduledLeaveDays += days;
+                            } else if (log.status === "Absent") {
+                                unscheduledLeaveDays += 1;
+                            }
+                        });
+
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td><strong>${agentName}</strong></td>
+                            <td>Tardiness: ${totalTardiness}m | OB: ${totalOverbreaks}m</td>
+                            <td><span class="badge-ui ${totalTardiness + totalOverbreaks > 15 ? "absent" : "present"}">${agentLogs.filter((l) => l.status === "Present" && ((l.metrics?.lateMins || 0) > 0 || (l.metrics?.obMins || 0) > 0)).length} Incident(s)</span></td>
+                            <td>${criticalLeaveDays} Day(s)</td>
+                            <td><span style="color: ${unscheduledLeaveDays >= 2 ? "var(--danger)" : "inherit"}; font-weight: ${unscheduledLeaveDays >= 2 ? "700" : "500"}">${unscheduledLeaveDays} Day(s)</span></td>
+                        `;
+                        trendBody.appendChild(row);
+                    });
                 }
-            }
 
-            const result = [];
-            for (let line of lines) {
-                if (!line.trim()) continue;
-                let row = [];
-                let inQuotes = false;
-                let current = '';
-                for (let i = 0; i < line.length; i++) {
-                    let char = line[i];
-                    if (char === '"' || char === "'") {
-                        inQuotes = !inQuotes;
-                    } else if (char === delimiter && !inQuotes) {
-                        row.push(current);
-                        current = '';
-                    } else {
-                        current += char;
+                function compileComplianceNotifier() {
+                    const rawTargetDate = document.getElementById("record-date").value || new Date().toISOString().split('T')[0];
+                    const normalizedTargetDate = normalizeDateString(rawTargetDate);
+                    const validationMonthStr = normalizedTargetDate.slice(0, 7);
+
+                    const complianceBody = document.getElementById("compliance-notifier-table-body");
+                    complianceBody.innerHTML = "";
+
+                    const monthlyRecords = database.filter((rec) => normalizeDateString(rec.date).startsWith(validationMonthStr));
+
+                    agentPoolList.forEach((agentName) => {
+                        const agentLogs = monthlyRecords.filter((rec) => rec.empName === agentName);
+                        let lostMinutesTotal = 0, timingInfractionCount = 0, combinedAbsenceDays = 0;
+
+                        agentLogs.forEach((log) => {
+                            if (log.status === "Present" && log.metrics) {
+                                const l = log.metrics.lateMins || 0, o = log.metrics.obMins || 0;
+                                if (l > 0 || o > 0) { lostMinutesTotal += (l + o); timingInfractionCount++; }
+                            } else if (log.status === "Absent") {
+                                combinedAbsenceDays++;
+                            } else if (log.status === "Leave" && log.metrics) {
+                                if (log.metrics.leaveType === "VL+ (non-emergency)" || log.metrics.leaveType === "SL+ (health/emergency)") combinedAbsenceDays += (log.metrics.leaveDays || 1);
+                            }
+                        });
+
+                        const isExcessiveTimeLapse = timingInfractionCount >= 3 || lostMinutesTotal > 15;
+                        const isExcessiveAbsence = combinedAbsenceDays >= 2;
+
+                        let timeLabel = `<span style="color:var(--success); font-weight:500;"><i class="fa fa-check-circle"></i> Compliant (${lostMinutesTotal}m)</span>`;
+                        if (isExcessiveTimeLapse) timeLabel = `<span style="color:var(--danger); font-weight:700;"><i class="fa fa-exclamation-triangle"></i> Excessive Loss (${lostMinutesTotal}m)</span>`;
+
+                        let absenceLabel = `<span style="color:var(--success); font-weight:500;"><i class="fa fa-check-circle"></i> Standard (${combinedAbsenceDays}d)</span>`;
+                        if (isExcessiveAbsence) absenceLabel = `<span style="color:var(--danger); font-weight:700;"><i class="fa fa-radiation"></i> Critical (${combinedAbsenceDays}d)</span>`;
+
+                        let actionLabel = `<span class="badge-ui present">No Action Required</span>`;
+                        if (isExcessiveTimeLapse || isExcessiveAbsence) actionLabel = `<span class="badge-ui absent"><i class="fa fa-gavel"></i> Issue Draft NTE Notification</span>`;
+
+                        const row = document.createElement("tr");
+                        row.innerHTML = `<td>${agentName}</td><td>${timeLabel}</td><td>${absenceLabel}</td><td>${actionLabel}</td>`;
+                        complianceBody.appendChild(row);
+                    });
+                }
+
+                function renderMasterLedgerTable() {
+                    const masterBody = document.getElementById("master-modal-table-body");
+                    masterBody.innerHTML = "";
+
+                    if (database.length === 0) {
+                        masterBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">Network database ledger lines appear empty or sync is pending.</td></tr>`;
+                        return;
                     }
+
+                    const sortedLogCollection = [...database].sort((x, y) => new Date(normalizeDateString(y.date)) - new Date(normalizeDateString(x.date)));
+
+                    sortedLogCollection.forEach((log) => {
+                        let metricString = "";
+                        if (log.status === "Present") metricString = `Tardiness: ${log.metrics.lateMins || 0}m, OB: ${log.metrics.obMins || 0}m`;
+                        else if (log.status === "Leave") metricString = `${log.metrics.leaveType} [${log.metrics.leaveDays} Day(s)]`;
+                        else if (log.status === "Rest Day") metricString = "Off Day";
+                        else if (log.status === "Absent") metricString = "LWOP Active";
+
+                        const badgeClassName = log.status === "Rest Day" ? "restday" : log.status.toLowerCase();
+                        const row = document.createElement("tr");
+
+                        row.setAttribute("data-agent", log.empName.toLowerCase());
+                        row.setAttribute("data-status", log.status.toLowerCase());
+                        row.setAttribute("data-date", log.date.toLowerCase());
+                        row.setAttribute("data-metrics", metricString.toLowerCase());
+                        row.setAttribute("data-remarks", (log.remarks || "").toLowerCase());
+
+                        row.innerHTML = `
+                            <td><span style="font-family: monospace;">${log.date}</span></td>
+                            <td><strong>${log.empName}</strong></td>
+                            <td><span class="badge-ui ${badgeClassName}">${log.status}</span></td>
+                            <td><small>${metricString}</small></td>
+                            <td><span style="font-size:0.75rem; color:var(--text-muted);">${log.remarks || "—"}</span></td>
+                        `;
+                        masterBody.appendChild(row);
+                    });
+
+                    filterMasterLedgerGrid();
                 }
-                row.push(current);
-                result.push(row);
-            }
-            return result;
-        }
 
-        function populateFilterDropdowns() {
-            const months = new Set();
-            const countries = new Set();
-            const channels = new Set();
-            const directions = new Set();
+                // Excel-Like Search Bar Filtering Matrix Routine Function
+                window.filterMasterLedgerGrid = function() {
+                    const searchInput = document.getElementById("master-excel-search");
+                    if (!searchInput) return;
 
-            dataset.forEach(row => {
-                if (row['MONTH'] && !isValidValue(row['MONTH'])) months.add(row['MONTH']);
-                if (row['COUNTRY'] && !isValidValue(row['COUNTRY'])) countries.add(row['COUNTRY']);
-                if (row['CHANNEL'] && !isValidValue(row['CHANNEL'])) channels.add(row['CHANNEL']);
-                if (row['DIRECTION'] && !isValidValue(row['DIRECTION'])) directions.add(row['DIRECTION']);
-            });
+                    const term = searchInput.value.trim().toLowerCase();
+                    const masterBody = document.getElementById("master-modal-table-body");
+                    const rows = masterBody.getElementsByTagName("tr");
 
-            const sortedMonths = Array.from(months).sort((a, b) => {
-                return MONTH_ORDER.indexOf(a.toUpperCase()) - MONTH_ORDER.indexOf(b.toUpperCase());
-            });
+                    if (rows.length === 1 && rows[0].cells.length === 1) return;
 
-            const sortedCountries = Array.from(countries).sort();
-            const sortedChannels = Array.from(channels).sort();
-
-            populateSelect('filterMonth', sortedMonths);
-            populateSelect('filterCountry', sortedCountries);
-            populateSelect('filterChannel', sortedChannels);
-            populateSelect('filterDirection', Array.from(directions).sort());
-
-            populateSelect('ledgerFilterMonth', sortedMonths);
-            populateSelect('ledgerFilterCountry', sortedCountries);
-            populateSelect('ledgerFilterChannel', sortedChannels);
-        }
-
-        function populateSelect(id, items) {
-            const sel = document.getElementById(id);
-            if (!sel) return;
-            const currentVal = sel.value;
-            sel.innerHTML = `<option value="ALL">All ${id.replace('filter', '').replace('ledgerFilter', '')}s</option>`;
-            items.forEach(item => {
-                const opt = document.createElement('option');
-                opt.value = item;
-                opt.textContent = item;
-                sel.appendChild(opt);
-            });
-            sel.value = currentVal;
-        }
-
-        function isValidValue(val) {
-            if (!val) return false;
-            const str = String(val).trim().toUpperCase();
-            return !INVALID_VALUES.includes(str);
-        }
-
-        function getFilteredData() {
-            const month = document.getElementById('filterMonth').value;
-            const country = document.getElementById('filterCountry').value;
-            const channel = document.getElementById('filterChannel').value;
-            const direction = document.getElementById('filterDirection').value;
-            const query = document.getElementById('searchQuery').value.toLowerCase();
-
-            return dataset.filter(r => {
-                if (month !== 'ALL' && r['MONTH'] !== month) return false;
-                if (country !== 'ALL' && r['COUNTRY'] !== country) return false;
-                if (channel !== 'ALL' && r['CHANNEL'] !== channel) return false;
-                if (direction !== 'ALL' && r['DIRECTION'] !== direction) return false;
-                if (query) {
-                    const str = Object.values(r).join(' ').toLowerCase();
-                    if (!str.includes(query)) return false;
-                }
-                return true;
-            });
-        }
-
-        function getFilteredLedgerData() {
-            const query = (document.getElementById('ledgerSearch')?.value || '').toLowerCase();
-            const month = document.getElementById('ledgerFilterMonth')?.value || 'ALL';
-            const country = document.getElementById('ledgerFilterCountry')?.value || 'ALL';
-            const channel = document.getElementById('ledgerFilterChannel')?.value || 'ALL';
-
-            return dataset.map((r, idx) => ({ ...r, _originalIndex: idx })).filter(r => {
-                if (month !== 'ALL' && r['MONTH'] !== month) return false;
-                if (country !== 'ALL' && r['COUNTRY'] !== country) return false;
-                if (channel !== 'ALL' && r['CHANNEL'] !== channel) return false;
-                if (query) {
-                    const str = Object.values(r).join(' ').toLowerCase();
-                    if (!str.includes(query)) return false;
-                }
-                return true;
-            });
-        }
-
-        function normalizeType(typeStr) {
-            if (!typeStr) return 'B2C';
-            const upper = typeStr.toUpperCase();
-            if (upper.includes('B2B')) return 'B2B';
-            return 'B2C';
-        }
-
-        function renderDashboard() {
-            const data = getFilteredData();
-
-            document.getElementById('kpiTotal').innerText = data.length.toLocaleString();
-
-            const countryCounts = countByValid(data, 'COUNTRY');
-            const topCountry = getTopKey(countryCounts);
-            document.getElementById('kpiTopCountry').innerText = topCountry.key || 'N/A';
-            document.getElementById('kpiTopCountrySub').innerText = `${topCountry.count.toLocaleString()} Contacts`;
-
-            const reasonCounts = countByValid(data, 'MAINREASON');
-            const topReason = getTopKey(reasonCounts);
-            document.getElementById('kpiTopReason').innerText = topReason.key || 'N/A';
-            document.getElementById('kpiTopReasonSub').innerText = `${topReason.count.toLocaleString()} Contacts`;
-
-            const resolvedCount = data.filter(r => (r['DISPOSITION'] || '').toUpperCase().includes('RESOLVED')).length;
-            const resRate = data.length > 0 ? ((resolvedCount / data.length) * 100).toFixed(1) : 0;
-            document.getElementById('kpiResolution').innerText = `${resRate}%`;
-
-            const normalizedTypeCounts = {};
-            data.forEach(r => {
-                const norm = normalizeType(r['TYPE']);
-                normalizedTypeCounts[norm] = (normalizedTypeCounts[norm] || 0) + 1;
-            });
-            const topType = getTopKey(normalizedTypeCounts);
-            document.getElementById('kpiTopType').innerText = topType.key || 'B2C';
-            document.getElementById('kpiTopTypeSub').innerText = `${topType.count.toLocaleString()} Contacts (${data.length ? ((topType.count/data.length)*100).toFixed(1) : 0}%)`;
-
-            const chanDirCounts = countPairValid(data, 'CHANNEL', 'DIRECTION');
-            const topChanDir = getTopKey(chanDirCounts);
-            document.getElementById('kpiTopChannel').innerText = topChanDir.key || 'N/A';
-            document.getElementById('kpiTopChannelSub').innerText = `${topChanDir.count.toLocaleString()} Contacts`;
-
-            const catSubCounts = countPairValid(data, 'CATEGORY', 'SUBCATEGORY');
-            const topCatSub = getTopKey(catSubCounts);
-            document.getElementById('kpiTopCatSub').innerText = topCatSub.key || 'N/A';
-            document.getElementById('kpiTopCatSubVal').innerText = `${topCatSub.count.toLocaleString()} Contacts`;
-
-            const dispReasonCounts = countPairValid(data, 'DISPOSITION', 'MAINREASON');
-            const topDispReason = getTopKey(dispReasonCounts);
-            document.getElementById('kpiTopDisp').innerText = topDispReason.key || 'N/A';
-            document.getElementById('kpiTopDispSub').innerText = `${topDispReason.count.toLocaleString()} Contacts`;
-
-            const monthCounts = countByValid(data, 'MONTH');
-            const chronologicalMonthCounts = {};
-            MONTH_ORDER.forEach(m => {
-                if (monthCounts[m] !== undefined) {
-                    chronologicalMonthCounts[m] = monthCounts[m];
-                }
-            });
-            renderBarChart('chartMonth', chronologicalMonthCounts, data.length, 12, 'purple', false);
-
-            renderBarChart('chartMainReason', reasonCounts, data.length, 5, 'teal');
-
-            const mainSubCounts = countPairValid(data, 'MAINREASON', 'SUBREASON');
-            renderBarChart('chartMainSub', mainSubCounts, data.length, 5, 'warning');
-
-            renderBarChart('chartCategory', countByValid(data, 'CATEGORY'), data.length, 5);
-
-            renderBarChart('chartCatSub', catSubCounts, data.length, 5, 'purple');
-
-            renderBarChart('chartTopModels', countByValid(data, 'MODEL'), data.length, 5, 'teal');
-        }
-
-        function renderBarChart(containerId, countObj, total, limit = 5, colorClass = '', sortHighestFirst = true) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-
-            let sorted = Object.entries(countObj);
-            
-            if (sortHighestFirst) {
-                sorted = sorted.sort((a, b) => b[1] - a[1]).slice(0, limit);
-            }
-
-            if (sorted.length === 0) {
-                container.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.8rem; text-align: center; padding: 1rem;">No Valid Data Available</div>';
-                return;
-            }
-
-            const maxVal = Math.max(...sorted.map(s => s[1]), 1);
-
-            sorted.forEach(([key, val]) => {
-                const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                const barWidth = ((val / maxVal) * 100);
-
-                const item = document.createElement('div');
-                item.className = 'bar-item';
-                item.innerHTML = `
-                    <div class="bar-label-group">
-                        <span><strong>${key}</strong></span>
-                        <span>${val.toLocaleString()} (${pct}%)</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill ${colorClass}" style="width: ${barWidth}%;"></div>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        function countByValid(arr, key) {
-            return arr.reduce((acc, curr) => {
-                const val = curr[key];
-                if (isValidValue(val)) {
-                    acc[val] = (acc[val] || 0) + 1;
-                }
-                return acc;
-            }, {});
-        }
-
-        function countPairValid(arr, key1, key2) {
-            return arr.reduce((acc, curr) => {
-                const k1 = curr[key1];
-                const k2 = curr[key2];
-                if (isValidValue(k1) && isValidValue(k2)) {
-                    const pair = `${k1} ➔ ${k2}`;
-                    acc[pair] = (acc[pair] || 0) + 1;
-                }
-                return acc;
-            }, {});
-        }
-
-        function getTopKey(countObj) {
-            let maxKey = 'N/A';
-            let maxCount = 0;
-            for (const [k, v] of Object.entries(countObj)) {
-                if (v > maxCount) {
-                    maxCount = v;
-                    maxKey = k;
-                }
-            }
-            return { key: maxKey, count: maxCount };
-        }
-
-        function generateContactAnalysisHTML() {
-            const data = getFilteredData();
-            const subReasons = countByValid(data, 'SUBREASON');
-            const topSub = Object.entries(subReasons).sort((a,b) => b[1] - a[1]).slice(0, 6);
-
-            let html = `<div class="info-grid">`;
-            topSub.forEach(([reason, count], idx) => {
-                const pct = data.length ? ((count / data.length)*100).toFixed(1) : 0;
-                html += `
-                    <div class="info-card">
-                        <div class="info-card-header">
-                            <i class="fa-solid fa-circle-${idx+1}"></i>
-                            <span>${reason}</span>
-                        </div>
-                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-top: 0.25rem;">
-                            ${count.toLocaleString()} <span style="font-size: 0.8rem; font-weight: 400; color: var(--text-secondary);">contacts</span>
-                        </div>
-                        <div class="bar-track" style="margin-top: 0.5rem;">
-                            <div class="bar-fill teal" style="width: ${pct}%;"></div>
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--text-secondary); text-align: right; margin-top: 0.25rem;">
-                            ${pct}% of Total Volume
-                        </div>
-                    </div>
-                `;
-            });
-            html += `</div>`;
-            return html;
-        }
-
-        function generateRegionalIntelHTML() {
-            const data = getFilteredData();
-            const countryCounts = countByValid(data, 'COUNTRY');
-            const sortedCountries = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
-
-            if (sortedCountries.length === 0) {
-                return `<div class="empty-state"><i class="fa-solid fa-earth-asia"></i><br>No regional country data available.</div>`;
-            }
-
-            let html = `<div class="info-grid">`;
-            sortedCountries.forEach(([country, count]) => {
-                const countryData = data.filter(r => r['COUNTRY'] === country);
-                const countryRes = countryData.filter(r => (r['DISPOSITION'] || '').toUpperCase().includes('RESOLVED')).length;
-                const countryResRate = countryData.length ? ((countryRes / countryData.length) * 100).toFixed(1) : 0;
-
-                const topReasonObj = getTopKey(countByValid(countryData, 'MAINREASON'));
-                const topChanObj = getTopKey(countByValid(countryData, 'CHANNEL'));
-
-                html += `
-                    <div class="info-card">
-                        <div class="info-card-header" style="justify-content: space-between;">
-                            <span><i class="fa-solid fa-flag"></i> ${country}</span>
-                            <span style="font-size: 0.75rem; color: var(--accent-teal); font-weight: 700;">${countryResRate}% Resolved</span>
-                        </div>
-                        <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-primary); margin-top: 0.25rem;">
-                            ${count.toLocaleString()} <span style="font-size: 0.8rem; font-weight: 400; color: var(--text-secondary);">Contacts</span>
-                        </div>
-                        <div style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--text-secondary);">
-                            <div><strong>Top Driver:</strong> ${topReasonObj.key} (${topReasonObj.count.toLocaleString()})</div>
-                            <div style="margin-top: 0.25rem;"><strong>Primary Channel:</strong> ${topChanObj.key} (${topChanObj.count.toLocaleString()})</div>
-                        </div>
-                    </div>
-                `;
-            });
-            html += `</div>`;
-
-            html += `
-                <div style="margin-top: 1.25rem; padding: 0.85rem 1rem; background-color: rgba(20, 184, 166, 0.08); border: 1px solid rgba(20, 184, 166, 0.25); border-radius: var(--radius); font-size: 0.8rem; color: var(--text-secondary); line-height: 1.45;">
-                    <i class="fa-solid fa-lightbulb" style="color: var(--accent-teal); margin-right: 0.4rem;"></i>
-                    <strong>Analytical Justification on Resolution Trends:</strong> Variances in country resolution percentages are heavily driven by localized operational factors. High-volume markets with strong First-Contact Resolution (FCR) typically leverage direct phone/chat support and localized authorized service center networks, whereas regions with higher proportions of pending hardware repairs or escalated technical tickets reflect lower initial resolution rates.
-                </div>
-            `;
-            return html;
-        }
-
-        function generateVolumeCompHTML() {
-            const data = getFilteredData();
-            const monthly = countByValid(data, 'MONTH');
-            let html = `<div class="info-grid">`;
-            
-            MONTH_ORDER.forEach(m => {
-                if (monthly[m] !== undefined) {
-                    const count = monthly[m];
-                    const pct = data.length ? ((count / data.length)*100).toFixed(1) : 0;
-                    const mData = data.filter(r => (r['MONTH'] || '').toUpperCase() === m);
-
-                    const topCty = getTopKey(countByValid(mData, 'COUNTRY'));
-                    const topRsn = getTopKey(countByValid(mData, 'MAINREASON'));
-                    const topMdl = getTopKey(countByValid(mData, 'MODEL'));
-
-                    html += `
-                        <div class="info-card">
-                            <div class="info-card-header"><i class="fa-regular fa-calendar"></i> ${m}</div>
-                            <div style="font-size: 1.4rem; font-weight: 700; color: var(--accent-color); margin-top: 0.2rem;">
-                                ${count.toLocaleString()} <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-secondary);">contacts</span>
-                            </div>
-                            <div class="bar-track" style="margin-top: 0.4rem;">
-                                <div class="bar-fill warning" style="width: ${Math.min(pct*2.5, 100)}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); text-align: right; margin-top: 0.2rem; font-weight: 600;">
-                                ${pct}% Dataset Share
-                            </div>
-
-                            <div class="meta-tag-list">
-                                <div class="meta-tag-item">
-                                    <span>Top Country:</span>
-                                    <strong>${topCty.key} (${topCty.count})</strong>
-                                </div>
-                                <div class="meta-tag-item">
-                                    <span>Top Main Reason:</span>
-                                    <strong>${topRsn.key} (${topRsn.count})</strong>
-                                </div>
-                                <div class="meta-tag-item">
-                                    <span>Top Model:</span>
-                                    <strong>${topMdl.key} (${topMdl.count})</strong>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-            });
-            html += `</div>`;
-            return html;
-        }
-
-        function renderLedgerTable() {
-            const tbody = document.getElementById('ledgerTableBody');
-            tbody.innerHTML = '';
-
-            const filteredData = getFilteredLedgerData();
-
-            document.getElementById('ledgerRecordCount').innerText = `Total Loaded Records: ${dataset.length.toLocaleString()} | Filtered: ${filteredData.length.toLocaleString()}`;
-            document.getElementById('filteredPurgeCount').innerText = filteredData.length.toLocaleString();
-
-            const btnPurgeSelected = document.getElementById('btnPurgeSelectedTrigger');
-            document.getElementById('selectedCount').innerText = selectedIndices.size.toLocaleString();
-            btnPurgeSelected.disabled = selectedIndices.size === 0;
-
-            const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
-            if (currentPage > totalPages) currentPage = totalPages;
-
-            document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages}`;
-
-            const startIdx = (currentPage - 1) * pageSize;
-            const endIdx = startIdx + pageSize;
-            const pageData = filteredData.slice(startIdx, endIdx);
-
-            const selectAllCb = document.getElementById('selectAllCheckbox');
-            if (pageData.length > 0) {
-                selectAllCb.checked = pageData.every(item => selectedIndices.has(item._originalIndex));
-            } else {
-                selectAllCb.checked = false;
-            }
-
-            if (pageData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="16" class="empty-state"><i class="fa-solid fa-folder-open"></i><br>No matching ledger records found.</td></tr>`;
-                return;
-            }
-
-            pageData.forEach((row, idx) => {
-                const tr = document.createElement('tr');
-                const origIdx = row._originalIndex;
-                const isChecked = selectedIndices.has(origIdx) ? 'checked' : '';
-
-                tr.innerHTML = `
-                    <td style="text-align: center;">
-                        <input type="checkbox" class="row-checkbox" data-index="${origIdx}" ${isChecked}>
-                    </td>
-                    <td>${startIdx + idx + 1}</td>
-                    <td>${row['YEAR'] || ''}</td>
-                    <td>${row['DATE'] || ''}</td>
-                    <td>${row['MONTH'] || ''}</td>
-                    <td>${row['CHANNEL'] || ''}</td>
-                    <td>${row['NAME'] || ''}</td>
-                    <td>${row['DIRECTION'] || ''}</td>
-                    <td>${row['COUNTRY'] || ''}</td>
-                    <td>${row['MAINREASON'] || ''}</td>
-                    <td>${row['SUBREASON'] || ''}</td>
-                    <td>${row['CATEGORY'] || ''}</td>
-                    <td>${row['SUBCATEGORY'] || ''}</td>
-                    <td>${row['MODEL'] || ''}</td>
-                    <td>${row['DISPOSITION'] || ''}</td>
-                    <td>${row['TYPE'] || ''}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            tbody.querySelectorAll('.row-checkbox').forEach(cb => {
-                cb.addEventListener('change', (e) => {
-                    const index = parseInt(e.target.getAttribute('data-index'));
-                    if (e.target.checked) {
-                        selectedIndices.add(index);
-                    } else {
-                        selectedIndices.delete(index);
+                    for (let i = 0; i < rows.length; i++) {
+                        const targetRow = rows[i];
+                        if (
+                            (targetRow.getAttribute("data-agent") || "").includes(term) ||
+                            (targetRow.getAttribute("data-status") || "").includes(term) ||
+                            (targetRow.getAttribute("data-date") || "").includes(term) ||
+                            (targetRow.getAttribute("data-metrics") || "").includes(term) ||
+                            (targetRow.getAttribute("data-remarks") || "").includes(term)
+                        ) {
+                            targetRow.style.display = "";
+                        } else {
+                            targetRow.style.display = "none";
+                        }
                     }
-                    renderLedgerTable();
-                });
-            });
-        }
-
-        function exportDatasetToCSV() {
-            const dataToExport = getFilteredLedgerData();
-            if (dataToExport.length === 0) {
-                alert('No data available to export.');
-                return;
-            }
-
-            const headers = EXPECTED_HEADERS;
-            let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
-
-            dataToExport.forEach(row => {
-                const values = headers.map(h => `"${(row[h] || '').replace(/"/g, '""')}"`);
-                csvContent += values.join(",") + "\n";
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `Master_Ledger_Export_${new Date().toISOString().slice(0, 10)}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function openModal(id) {
-            document.getElementById(id).classList.add('active');
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
-
-        function openGenericModal(title, content) {
-            document.getElementById('genericModalTitle').innerText = title;
-            document.getElementById('genericModalBody').innerHTML = content;
-            openModal('modalGenericView');
-        }
-    </script>
-</body>
+                };
+            })();
+        </script>
+    </body>
 </html>
