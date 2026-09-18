@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Team Attendance - Dashboard</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=23195&format=png&color=40C057" />
+        <link rel="shortcut icon" href="https://img.icons8.com/?size=100&id=23195&format=png&color=40C057" />
+
+        <style>
+            /* =========================================
+           CSS VARIABLES (THEMING & GLOBAL)
+           ========================================= */
+            :root {
+                --bg-body: #121212;
+                --bg-panel: #1e1e1e;
+                --bg-input: #2d2d2d;
+                --text-main: #f0f0f0;
+                --text-muted: #aaaaaa;
+                --border-color: #333333;
+                --accent-color: #3498db;
+                --accent-hover: #2980b9;
+                --success: #2ecc71;
+                --danger: #e74c3c;
+                --warning: #ff9800;
+                --purple: #9b59b6;
+                --base-font-size: 14px;
+                --radius: 6px;
+                --transition: all 0.2s ease;
+            }
+
+            [data-theme="light"] {
+                --bg-body: #f5f7fa;
+                --bg-panel: #ffffff;
+                --bg-input: #f8fafc;
+                --text-main: #2c3e50;
+                --text-muted: #64748b;
+                --border-color: #e2e8f0;
+                --accent-color: #1e40af;
+                --accent-hover: #1e3a8a;
+                --purple: #6b21a8;
+            }
+
+            /* =========================================
+           GLOBAL ELEMENT STYLES
+           ========================================= */
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            html {
+                font-size: var(--base-font-size);
+            }
+
+            body {
+                font-family: "Plus Jakarta Sans", "Segoe UI", Tahoma, sans-serif;
+                background-color: var(--bg-body);
+                color: var(--text-main);
+                transition: var(--transition);
+                line-height: 1.3;
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 1600px;
+                margin: 0 auto;
+                padding: 6px 12px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                height: calc(100vh - 35px);
+            }
+
+            h2, h3, h4 {
+                color: var(--text-main);
+                font-weight: 600;
+            }
+
+            /* Buttons */
+            button, .file-upload-btn {
+                background-color: var(--bg-input);
+                color: var(--text-main);
+                border: 1px solid var(--border-color);
+                padding: 5px 10px;
+                border-radius: var(--radius);
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 0.8rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+            button:hover, .file-upload-btn:hover {
+                background-color: var(--border-color);
+            }
+            button.primary, .file-upload-btn.primary {
+                background-color: var(--accent-color);
+                color: #fff;
+                border-color: var(--accent-color);
+            }
+            button.primary:hover, .file-upload-btn.primary:hover {
+                background-color: var(--accent-hover);
+            }
+            button.warning {
+                background-color: var(--warning);
+                color: #fff;
+                border-color: var(--warning);
+            }
+
+            input {
+                width: 100%;
+                padding: 5px 8px;
+                background-color: var(--bg-input);
+                color: var(--text-main);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                font-size: 0.85rem;
+                transition: var(--transition);
+                font-family: inherit;
+            }
+            input:focus {
+                outline: none;
+                border-color: var(--accent-color);
+                box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            }
+
+            /* Layout Panels */
+            .panel {
+                background-color: var(--bg-panel);
+                border-radius: var(--radius);
+                padding: 8px 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                border: 1px solid var(--border-color);
+            }
+
+            /* =========================================
+           HEADER SECTION
+           ========================================= */
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-bottom: 4px;
+                border-bottom: 1px solid var(--border-color);
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            .brand-box {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .brand-logo {
+                background: linear-gradient(135deg, #0284c7, #0369a1);
+                color: white;
+                width: 34px;
+                height: 34px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.3rem;
+                box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+            }
+            .brand h1 {
+                font-size: 1.15rem;
+                font-weight: 800;
+                letter-spacing: 0.5px;
+            }
+            .brand p {
+                font-size: 0.65rem;
+                color: var(--text-muted);
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .global-controls {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            /* =========================================
+           INFOGRAPHICS & DASHBOARD METRICS
+           ========================================= */
+            .dashboard-grid {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 6px;
+            }
+            @media (max-width: 1200px) {
+                .dashboard-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+            @media (max-width: 768px) {
+                .dashboard-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            .kpi-card {
+                background: var(--bg-panel);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                padding: 8px 10px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                position: relative;
+                overflow: hidden;
+            }
+            .kpi-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: var(--accent-color);
+            }
+            .kpi-card.success::before { background: var(--success); }
+            .kpi-card.warning::before { background: var(--warning); }
+            .kpi-card.danger::before { background: var(--danger); }
+            .kpi-card.purple::before { background: var(--purple); }
+
+            .kpi-icon {
+                font-size: 1.25rem;
+                color: var(--text-muted);
+                width: 32px;
+                height: 32px;
+                background: var(--bg-input);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .kpi-data {
+                flex: 1;
+                min-width: 0;
+            }
+            .kpi-value {
+                font-size: 1.25rem;
+                font-weight: 800;
+                line-height: 1.1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .kpi-card .kpi-label {
+                font-size: 0.65rem;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* Visual Chart Bar Components */
+            .chart-panel {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 12px;
+                padding: 6px 12px;
+            }
+            .progress-segment-container {
+                display: flex;
+                height: 16px;
+                border-radius: var(--radius);
+                overflow: hidden;
+                background: var(--bg-input);
+                margin-top: 3px;
+                border: 1px solid var(--border-color);
+            }
+            .progress-segment {
+                height: 100%;
+                transition: width 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 0.7rem;
+                font-weight: bold;
+            }
+
+            /* =========================================
+           CORE DISPLAY WORKSPACE (MAXIMIZED VIEW)
+           ========================================= */
+            .workspace-layout {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 8px;
+                flex: 1;
+                min-height: 0;
+            }
+            .workspace-layout .panel {
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+            }
+
+            /* =========================================
+           TABLES & PREVIEW DATA MODULES
+           ========================================= */
+            .table-wrapper {
+                flex: 1;
+                overflow-y: auto;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                background: var(--bg-panel);
+                transition: var(--transition);
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.8rem;
+                text-align: left;
+            }
+            th, td {
+                padding: 6px 8px;
+                border-bottom: 1px solid var(--border-color);
+            }
+            th {
+                background-color: var(--bg-input);
+                font-weight: 600;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+            tbody tr:hover {
+                background-color: rgba(255, 255, 255, 0.01);
+            }
+            [data-theme="light"] tbody tr:hover {
+                background-color: rgba(0, 0, 0, 0.01);
+            }
+            .badge-ui {
+                display: inline-block;
+                padding: 1px 5px;
+                border-radius: 4px;
+                font-size: 0.7rem;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+            .badge-ui.present { background: rgba(46, 204, 113, 0.2); color: var(--success); }
+            .badge-ui.leave { background: rgba(241, 196, 15, 0.2); color: var(--warning); }
+            .badge-ui.absent { background: rgba(231, 76, 60, 0.2); color: var(--danger); }
+            .badge-ui.restday { background: rgba(155, 89, 182, 0.2); color: var(--purple); }
+
+            /* =========================================
+           MODALS OVERLAYS & PORTALS
+           ========================================= */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.65);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                backdrop-filter: blur(3px);
+            }
+            .modal-overlay.active { display: flex; }
+            .modal-content {
+                background: var(--bg-body);
+                width: 92%;
+                max-width: 1000px;
+                max-height: 85vh;
+                border-radius: var(--radius);
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+                border: 1px solid var(--border-color);
+            }
+            .modal-header {
+                padding: 10px 14px;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: var(--bg-panel);
+            }
+            .modal-body {
+                padding: 14px;
+                overflow-y: auto;
+                flex: 1;
+            }
+            .close-modal {
+                background: none;
+                border: none;
+                font-size: 1.3rem;
+                color: var(--text-muted);
+                cursor: pointer;
+            }
+            .close-modal:hover { color: var(--danger); }
+
+            /* Analytics UI Layout Blocks */
+            .analytics-summary-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 14px;
+            }
+            .stat-box {
+                background: var(--bg-input);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                padding: 10px;
+            }
+            .stat-box-title {
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                font-weight: 700;
+                margin-bottom: 4px;
+            }
+            .stat-box-value { font-size: 1.5rem; font-weight: 800; }
+
+            /* Collapsible Readme Details Layout Block Styles */
+            .readme-details {
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                margin-bottom: 8px;
+                background: var(--bg-panel);
+                overflow: hidden;
+            }
+            .readme-summary {
+                padding: 8px 12px;
+                font-weight: 600;
+                font-size: 0.85rem;
+                cursor: pointer;
+                background: var(--bg-input);
+                color: var(--text-main);
+                user-select: none;
+                outline: none;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .readme-summary::before {
+                content: "\f0da";
+                font-family: "Font Awesome 6 Free";
+                font-weight: 900;
+                transition: transform 0.2s ease;
+                display: inline-block;
+                width: 12px;
+            }
+            .readme-details[open] .readme-summary::before { transform: rotate(90deg); }
+            .readme-content {
+                padding: 10px 14px 4px 14px;
+                font-size: 0.8rem;
+                line-height: 1.45;
+                color: var(--text-main);
+            }
+            .readme-highlight { color: var(--accent-color); font-weight: 600; }
+
+            /* Excel Search Bar Elements Extension Styles */
+            .excel-search-bar-container {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: var(--bg-input);
+                border: 1px solid var(--border-color);
+                padding: 6px 10px;
+                border-radius: var(--radius);
+                margin-bottom: 10px;
+                box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            }
+            .excel-search-bar-container i { color: var(--text-muted); font-size: 0.9rem; }
+            .excel-search-bar-container input {
+                border: none !important;
+                background: transparent !important;
+                padding: 2px 0px !important;
+                font-size: 0.85rem;
+                box-shadow: none !important;
+                width: 100%;
+                color: var(--text-main);
+            }
+
+            /* =========================================
+           FOOTER ANNOUNCEMENTS MARQUEE
+           ========================================= */
+            footer {
+                background-color: var(--bg-panel);
+                border-top: 1px solid var(--border-color);
+                padding: 4px 12px;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                font-size: 0.75rem;
+                height: 26px;
+            }
+            .marquee-wrapper {
+                flex: 1;
+                overflow: hidden;
+                white-space: nowrap;
+                border-left: 2px solid var(--accent-color);
+                padding-left: 10px;
+            }
+            .marquee {
+                display: inline-block;
+                animation: scroll-text 30s linear infinite;
+            }
+            @keyframes scroll-text {
+                0% { transform: translateX(100%); }
+                100% { transform: translateX(-100%); }
+            }
+
+            #toast-container {
+                position: fixed;
+                bottom: 35px;
+                right: 20px;
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+            .toast {
+                min-width: 260px;
+                padding: 8px 12px;
+                background-color: var(--bg-panel);
+                color: var(--text-main);
+                border-left: 4px solid var(--accent-color);
+                border-radius: var(--radius);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.8rem;
+            }
+            .toast.error { border-color: var(--danger); }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <div class="brand-box">
+                    <div class="brand-logo"><i class="fa-solid fa-chart-column"></i></div>
+                    <div class="brand">
+                        <h1>Team Attendance Dashboard</h1>
+                        <p>Operations Team Attendance Mapping</p>
+                    </div>
+                </div>
+                <div class="global-controls">
+
+                    <div style="display: flex; align-items: center; gap: 4px; background: var(--bg-panel); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: var(--radius);">
+                        <label for="record-date" style="margin: 0; font-size: 0.75rem; font-weight: 700; white-space: nowrap; color: var(--text-muted);">View Horizon Date:</label>
+                        <input type="date" id="record-date" style="padding: 2px 4px; font-size: 0.8rem; border: none; width: auto; background: transparent;" />
+                    </div>
+                    <button class="primary" onclick="toggleModal('trend-monitor-modal')">
+                        <i class="fa-solid fa-chart-line"></i> Agent Trend Monitor
+                    </button>
+                    <button class="primary" onclick="toggleModal('compliance-notifier-modal')">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Compliance Notifier
+                    </button>
+                    <button class="primary" onclick="toggleModal('history-modal')">
+                        <i class="fa-solid fa-table-list"></i> Master Logs View
+                    </button>
+                    <button class="warning" onclick="toggleModal('readme-guide-modal')">
+                        <i class="fa-solid fa-book-open"></i> View Guide
+                    </button>
+                    <button onclick="toggleTheme()" id="theme-btn" title="Toggle Theme">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                    <div style="display: flex; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-color);">
+                        <button style="border: none; border-radius: 0; padding: 4px 8px" onclick="adjustFontSize(-2)"><i class="fas fa-minus"></i></button>
+                        <button style="border: none; border-radius: 0; padding: 4px 8px; background: var(--bg-panel)" onclick="resetFontSize()"><i class="fas fa-font"></i></button>
+                        <button style="border: none; border-radius: 0; padding: 4px 8px" onclick="adjustFontSize(2)"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </header>
+
+            <section class="dashboard-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="count-total">0</div>
+                        <div class="kpi-label">Active Pool of Agents</div>
+                    </div>
+                </div>
+                <div class="kpi-card success">
+                    <div class="kpi-icon" style="color: var(--success)"><i class="fa-solid fa-user-check"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="count-present">0</div>
+                        <div class="kpi-label">Present (IN)</div>
+                    </div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-icon" style="color: var(--purple)"><i class="fa-solid fa-bed"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="count-restDay">0</div>
+                        <div class="kpi-label">Rest Day</div>
+                    </div>
+                </div>
+                <div class="kpi-card danger">
+                    <div class="kpi-icon" style="color: var(--danger)"><i class="fa-solid fa-times"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="count-absent">0</div>
+                        <div class="kpi-label">Absent (A- / LWOP)</div>
+                    </div>
+                </div>
+                <div class="kpi-card warning">
+                    <div class="kpi-icon" style="color: var(--warning)"><i class="fa-solid fa-plane-departure"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="count-leave">0</div>
+                        <div class="kpi-label">On Leave Status</div>
+                    </div>
+                </div>
+                <div class="kpi-card danger">
+                    <div class="kpi-icon" style="color: var(--danger)"><i class="fa-solid fa-business-time"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="total-late">0m</div>
+                        <div class="kpi-label">Cumulative Tardiness</div>
+                    </div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-icon" style="color: var(--purple)"><i class="fa-solid fa-mug-hot"></i></div>
+                    <div class="kpi-data">
+                        <div class="kpi-value" id="total-overbreaks">0m</div>
+                        <div class="kpi-label">Cumulative Overbreaks</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel chart-panel">
+                <div>
+                    <h4 style="font-size: 0.85rem">Daily Breakdown Distribution</h4>
+                    <div class="progress-segment-container" id="distribution-bar"></div>
+                </div>
+                <div>
+                    <h4 style="font-size: 0.85rem">Pool Coverage Rate</h4>
+                    <div style="font-size: 1.1rem; font-weight: 800; margin-top: 1px" id="coverage-percentage">0%</div>
+                </div>
+            </section>
+
+            <div class="workspace-layout">
+                <section class="panel">
+                    <h3 style="margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span>Live Operational Stream View</span>
+					<div id="live-clock"></div>
+                        <small style="font-size: 0.75rem; color: var(--accent-color); font-weight: normal;"><i class="fa-solid fa-file-import"></i> Local file ecosystem; raw data is stored in the browser's localStorage; </small>
+                    </h3>
+                    <div class="table-wrapper">
+                        <table id="stream-table">
+                            <thead>
+                                <tr>
+                                    <th>Recorded Date</th>
+                                    <th>Agent Name</th>
+                                    <th>Status Badging</th>
+                                    <th>Metrics Context Summary</th>
+                                    <th>Remarks Tracking Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stream-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <footer>
+                <div style="font-weight: bold; white-space: nowrap">System Board Ticker:</div>
+                <div class="marquee-wrapper">
+                    <div class="marquee">
+					Click on the <strong> Load Masterfile </strong> and then browse through the Epson shared folder and go to the Agent Resources >> TOOLS >> attendance-masterfile.csv.
+					</div>
+                </div>
+                    <div style="display: flex; align-items: center; gap: 4px; padding: 2px 6px;">
+                        <label class="btn primary" for="csv-file-picker">
+                            <i class="fa-solid fa-file-csv"></i> Load Masterfile
+                        </label>
+                        <input type="file" id="csv-file-picker" accept=".csv" style="display: none;" />
+                        <span id="file-status-label" style="font-size: 0.75rem; color: var(--text-muted); padding: 0 4px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">No file loaded</span>
+                    </div>
+            </footer>
+        </div>
+
+        <div class="modal-overlay" id="trend-monitor-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-chart-line" style="color: var(--accent-color)"></i> Agent Behavioral Pattern Trend Monitor</h3>
+                    <button class="close-modal" onclick="toggleModal('trend-monitor-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-wrapper" style="max-height: 60vh">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Agent Entity Name</th>
+                                    <th>Loss Metric Footprints</th>
+                                    <th>Attendance Patterns</th>
+                                    <th>Approved Leave Logs</th>
+                                    <th>Unscheduled / Absent Logs</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trend-monitor-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="compliance-notifier-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-triangle-exclamation" style="color: var(--danger)"></i> Operations Parameter Compliance Notifier</h3>
+                    <button class="close-modal" onclick="toggleModal('compliance-notifier-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <blockquote style="background: rgba(231, 76, 60, 0.08); border-left: 4px solid var(--danger); padding: 8px; font-size: 0.8rem; border-radius: var(--radius); margin-bottom: 6px;">
+                        <strong>PROVISIONAL OPERATIONS NOTICE:</strong> Evaluated infractions reflect guidelines that are subject to adjustment pending formal HR validation. Evaluation checks occur within the target calendar frame; associated dynamic <strong>Notice To Explain (NTE)</strong> generation processes occur during the subsequent month following performance lapses.
+                    </blockquote>
+                    <div class="table-wrapper" style="max-height: 55vh">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Agent Name</th>
+                                    <th>Tardiness/OB Threshold Status</th>
+                                    <th>Absence Threshold Status</th>
+                                    <th>Compliance Risk Evaluation Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="compliance-notifier-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="history-modal">
+            <div class="modal-content" style="max-width: 1100px">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-table-list" style="color: var(--accent-color)"></i> Master Tracking Logs Ledger View</h3>
+                    <button class="close-modal" onclick="toggleModal('history-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="excel-search-bar-container">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input 
+                            type="text" 
+                            id="master-excel-search" 
+                            placeholder="Search logs by Agent, Status, Date or Keyword (Excel-style instant filter)..." 
+                            oninput="filterMasterLedgerGrid()"
+                        />
+                    </div>
+					<button onclick="purgeLocalStorage()" title="Purge cached data" style="color:red;">
+						<i class="fa-solid fa-trash"></i> Purge Data
+					</button>
+                    <div class="table-wrapper" style="max-height: 58vh">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Agent</th>
+                                    <th>Status</th>
+                                    <th>Metrics/Taggings Fields</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="master-modal-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="readme-guide-modal">
+            <div class="modal-content" style="max-width: 800px">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-book" style="color: var(--warning)"></i> Dashboard Monitoring Guide</h3>
+                    <button class="close-modal" onclick="toggleModal('readme-guide-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <details class="readme-details" open>
+                        <summary class="readme-summary">1. Masterfile Sourcing & Path Directory Instructions</summary>
+                        <div class="readme-content">
+                            <p>To view operational data analytics metrics, you must explicitly supply the current core logs ledger using the manual file target loader widget in the lower right console layout interface loop.</p>
+                            <p style="margin-top: 6px;"><strong>Target File Destination Vector String:</strong></p>
+                            <blockquote style="background: var(--bg-input); padding: 6px 10px; border-left: 4px solid var(--warning); font-family: monospace; user-select: all; margin: 4px 0; word-break: break-all;">\\hgs-ph.com\shared folders\Epson\Agents\Agents Resources\TOOLS</blockquote>
+                            <p style="margin-top: 6px; font-size: 0.78rem; color: var(--text-muted);"><i class="fa-solid fa-circle-info"></i> <strong>Workflow Action Note:</strong> When the browser loading interface environment wizard triggers open, simply copy the path text network link layout matrix above, paste it inside your browser dialog explorer folder navigation address locator tracking window, and locate <strong><span class="readme-highlight">attendance-masterfile.csv</span></strong>.</p>
+                        </div>
+                    </details>
+                    <details class="readme-details">
+                        <summary class="readme-summary">2. Real-Time View & Excel Filtering</summary>
+                        <div class="readme-content">
+                            <p>Use the global navigation control panel headers to step backward or forward along your calendar track timeline view matrix. Clicking into the <strong>Master Logs View</strong> dashboard opens an instant querying search window engine built to look up values identically to spreadsheet filtering models.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast-container"></div>
+
+        <script>
+            (function () {
+                "use strict";
+
+                // Global Operational Database State
+				let database = [];
+				const agentPoolList = [
+					"Abrio, Bernadette", "Abulencia, Alvina", "Alibadbad, Precy",
+					"Arguelles, Marc Ainsley", "Avanzado, Maria Teresita", "Bachiller, Romeo Marvin",
+					"Biojon, James Carlo", "Boquiña, Princess", "Buhat, Cherry",
+					"Dilla, John Dominique", "Fernandez, Dennis", "Gabac, Philip",
+					"Igual, Tristan John", "Jabson, Denisse Gayle", "Orbon, Kathleen Mae",
+					"Rodriguez, Shairaine", "Sumalinog, Jhomer"
+				];
+
+                // Standardized Date Normalization Engine to handle dynamic CSV formats (YYYY-MM-DD, MM/DD/YYYY, M/D/YYYY)
+                function normalizeDateString(dateStr) {
+                    if (!dateStr) return "";
+                    let cleanStr = dateStr.trim().replace(/^"|"$/g, "");
+                    if (!cleanStr) return "";
+
+                    // If already YYYY-MM-DD
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(cleanStr)) {
+                        return cleanStr;
+                    }
+
+                    // Check for standard JS readable formats or forward slashes
+                    let parts = cleanStr.split(/[\/\-\.]/);
+                    if (parts.length === 3) {
+                        let p1 = parseInt(parts[0], 10);
+                        let p2 = parseInt(parts[1], 10);
+                        let p3 = parseInt(parts[2], 10);
+
+                        if (!isNaN(p1) && !isNaN(p2) && !isNaN(p3)) {
+                            // YYYY/MM/DD or YYYY-MM-DD
+                            if (parts[0].length === 4) {
+                                let y = p1;
+                                let m = String(p2).padStart(2, '0');
+                                let d = String(p3).padStart(2, '0');
+                                return `${y}-${m}-${d}`;
+                            } 
+                            // MM/DD/YYYY or M/D/YYYY
+                            else if (parts[2].length === 4) {
+                                let y = p3;
+                                let m = String(p1).padStart(2, '0');
+                                let d = String(p2).padStart(2, '0');
+                                return `${y}-${m}-${d}`;
+                            }
+                        }
+                    }
+
+                    // Native fallback parser
+                    let dObj = new Date(cleanStr);
+                    if (!isNaN(dObj.getTime())) {
+                        let y = dObj.getFullYear();
+                        let m = String(dObj.getMonth() + 1).padStart(2, '0');
+                        let d = String(dObj.getDate()).padStart(2, '0');
+                        return `${y}-${m}-${d}`;
+                    }
+
+                    return cleanStr;
+                }
+
+				// Purge function
+				window.purgeLocalStorage = function() {
+					if (confirm("Are you sure you want to clear the masterfile cache? This action cannot be undone.")) {
+						localStorage.removeItem("attendance_masterfile_data");
+						database = [];
+						location.reload();
+					}
+				};
+
+                // Manual Localized File Ingestion Core Pipeline Process Logic Handler
+				function handleManualCSVUpload(event) {
+					const parsedTargetFile = event.target.files[0];
+					if (!parsedTargetFile) return;
+
+					document.getElementById("file-status-label").textContent = parsedTargetFile.name;
+
+					const fileReaderEngine = new FileReader();
+					fileReaderEngine.onload = function (e) {
+						const textPayload = e.target.result;
+						
+						localStorage.setItem("attendance_masterfile_data", textPayload);
+						database = []; // Reset existing local database array before parsing complete fresh batch
+						parseCSVDatabasePayload(textPayload);
+						
+						refreshDashboardUI();
+						showToast("Database synchronized and saved to local storage.", "success");
+					};
+					fileReaderEngine.readAsText(parsedTargetFile);
+				}
+
+                // Dashboard Initializer Hooks Pipeline
+				document.addEventListener("DOMContentLoaded", () => {
+					initTheme();
+					initClock();
+					initFontSize();
+					
+					const todayStr = new Date().toISOString().split('T')[0];
+					document.getElementById("record-date").value = todayStr;
+					document.getElementById("record-date").addEventListener("change", refreshDashboardUI);
+					
+					document.getElementById("csv-file-picker").addEventListener("change", handleManualCSVUpload);
+
+					// PERSISTENCE: Load from storage if available
+					const savedData = localStorage.getItem("attendance_masterfile_data");
+					if (savedData) {
+						parseCSVDatabasePayload(savedData);
+						showToast("Restored data from local storage.", "success");
+					}
+
+					refreshDashboardUI();
+				});
+
+				function parseCSVDatabasePayload(csvText) {
+					const lines = csvText.split(/\r?\n/);
+					const existingKeys = new Set(database.map(d => `${d.date}|${d.empName}`));
+
+					for (let i = 1; i < lines.length; i++) {
+						const rowLine = lines[i].trim();
+						if (!rowLine) continue;
+
+						const segments = rowLine.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+						if (segments.length >= 3) {
+							const rawDate = segments[0].trim();
+                            const date = normalizeDateString(rawDate);
+							const empName = segments[1].replace(/^"|"$/g, "").trim();
+							
+							// Duplicate Check
+							const uniqueKey = `${date}|${empName}`;
+							if (existingKeys.has(uniqueKey)) continue;
+
+							const status = segments[2].trim();
+							let metrics = {};
+							if (status === "Present") {
+								metrics.lateMins = parseInt(segments[3]) || 0;
+								metrics.obMins = parseInt(segments[4]) || 0;
+							} else if (status === "Leave") {
+								metrics.leaveType = segments[5] ? segments[5].replace(/^"|"$/g, "") : "Sick leave";
+								metrics.leaveDays = parseFloat(segments[6]) || 1;
+							}
+
+							const remarks = segments[7] ? segments[7].replace(/^"|"$/g, "") : "";
+
+							database.push({
+								uuid: "id_" + i + "_" + Date.now(),
+								date,
+								empName,
+								status,
+								metrics,
+								remarks
+							});
+							
+							existingKeys.add(uniqueKey);
+						}
+					}
+				}
+
+                window.showToast = function (message, type = "error") {
+                    const container = document.getElementById("toast-container");
+                    const toast = document.createElement("div");
+                    toast.className = `toast ${type}`;
+                    toast.innerHTML = `<span>${message}</span><button style="background:none; border:none; color:inherit; font-size:1.1rem; cursor:pointer;" onclick="this.parentElement.remove()">&times;</button>`;
+                    container.appendChild(toast);
+                    setTimeout(() => { toast.remove(); }, 6000);
+                };
+
+                // UI Layout Theming & Typography Adjustments Engine Code
+                window.toggleTheme = function () {
+                    const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+                    const targetTheme = currentTheme === "dark" ? "light" : "dark";
+                    document.documentElement.setAttribute("data-theme", targetTheme);
+                    localStorage.setItem("uiTheme_dash", targetTheme);
+                    updateThemeIcon(targetTheme);
+                };
+
+                function initTheme() {
+                    const activePersistedTheme = localStorage.getItem("uiTheme_dash") || "dark";
+                    document.documentElement.setAttribute("data-theme", activePersistedTheme);
+                    updateThemeIcon(activePersistedTheme);
+                }
+
+                function updateThemeIcon(theme) {
+                    const icon = document.getElementById("theme-btn").querySelector("i");
+                    icon.className = theme === "light" ? "fa-solid fa-sun" : "fa-solid fa-moon";
+                }
+
+                function initClock() {
+                    const clock = document.getElementById("live-clock");
+                    setInterval(() => {
+                        clock.textContent = new Date().toLocaleString("en-US", {
+                            weekday: "long", year: "numeric", month: "long", day: "numeric",
+                            hour: "numeric", minute: "numeric", second: "numeric", hour12: true
+                        });
+                    }, 1000);
+                }
+
+                function initFontSize() {
+                    let currentDelta = parseFloat(localStorage.getItem("fontSizeDelta_dash")) || 0;
+                    document.documentElement.style.setProperty("--base-font-size", 14 + currentDelta + "px");
+                }
+
+                window.adjustFontSize = function (amount) {
+                    let currentDelta = (parseFloat(localStorage.getItem("fontSizeDelta_dash")) || 0) + amount;
+                    if (currentDelta < -4) currentDelta = -4;
+                    if (currentDelta > 8) currentDelta = 8;
+                    localStorage.setItem("fontSizeDelta_dash", currentDelta);
+                    document.documentElement.style.setProperty("--base-font-size", 14 + currentDelta + "px");
+                };
+
+                window.resetFontSize = function () {
+                    localStorage.setItem("fontSizeDelta_dash", 0);
+                    document.documentElement.style.setProperty("--base-font-size", "14px");
+                };
+
+                window.toggleModal = function (modalId) {
+                    const modal = document.getElementById(modalId);
+                    if (!modal) return;
+                    modal.classList.toggle("active");
+
+                    if (modal.classList.contains("active")) {
+                        if (modalId === "trend-monitor-modal") compileTrendMonitorMetrics();
+                        if (modalId === "compliance-notifier-modal") compileComplianceNotifier();
+                        if (modalId === "history-modal") {
+                            document.getElementById("master-excel-search").value = "";
+                            renderMasterLedgerTable();
+                        }
+                    }
+                };
+
+                // Analytical UI Processing Calculations 
+                function refreshDashboardUI() {
+                    const rawTargetDate = document.getElementById("record-date").value;
+                    const targetDateValue = normalizeDateString(rawTargetDate);
+                    const expectedTotalRosterCount = agentPoolList.length;
+                    document.getElementById("count-total").textContent = expectedTotalRosterCount;
+
+                    const dailyEntries = database.filter((rec) => normalizeDateString(rec.date) === targetDateValue);
+
+                    const presentCount = dailyEntries.filter((r) => r.status === "Present").length;
+                    const leaveCount = dailyEntries.filter((r) => r.status === "Leave").length;
+                    const absentCount = dailyEntries.filter((r) => r.status === "Absent").length;
+                    const restDayCount = dailyEntries.filter((r) => r.status === "Rest Day").length;
+
+                    const cumulativeLateMinutes = dailyEntries.reduce((acc, curr) => acc + (curr.metrics.lateMins || 0), 0);
+                    const cumulativeOverbreaks = dailyEntries.reduce((acc, curr) => acc + (curr.metrics.obMins || 0), 0);
+
+                    document.getElementById("count-present").textContent = presentCount;
+                    document.getElementById("count-absent").textContent = absentCount;
+                    document.getElementById("count-restDay").textContent = restDayCount;
+                    document.getElementById("count-leave").textContent = leaveCount;
+                    document.getElementById("total-late").textContent = `${cumulativeLateMinutes}m`;
+                    document.getElementById("total-overbreaks").textContent = `${cumulativeOverbreaks}m`;
+
+                    const coverageRate = expectedTotalRosterCount > 0 ? Math.round((presentCount / expectedTotalRosterCount) * 100) : 0;
+                    document.getElementById("coverage-percentage").textContent = `${coverageRate}% Coverage`;
+
+                    const distBar = document.getElementById("distribution-bar");
+                    distBar.innerHTML = "";
+
+                    if (dailyEntries.length > 0) {
+                        const pPct = (presentCount / dailyEntries.length) * 100;
+                        const lPct = (leaveCount / dailyEntries.length) * 100;
+                        const aPct = (absentCount / dailyEntries.length) * 100;
+                        const rdPct = (restDayCount / dailyEntries.length) * 100;
+
+                        if (pPct > 0) distBar.innerHTML += `<div class="progress-segment" style="width: ${pPct}%; background: var(--success);">IN</div>`;
+                        if (lPct > 0) distBar.innerHTML += `<div class="progress-segment" style="width: ${lPct}%; background: var(--warning);">LV</div>`;
+                        if (aPct > 0) distBar.innerHTML += `<div class="progress-segment" style="width: ${aPct}%; background: var(--danger);">AB</div>`;
+                        if (rdPct > 0) distBar.innerHTML += `<div class="progress-segment" style="width: ${rdPct}%; background: var(--purple);">RD</div>`;
+                    }
+
+                    const streamBody = document.getElementById("stream-table-body");
+                    streamBody.innerHTML = "";
+
+                    if (database.length === 0) {
+                        streamBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--warning); padding: 24px; font-weight: 600;"><i class="fa-solid fa-arrow-up"></i> Ingestion Required: Click 'Load Masterfile' above to select your logs source file.</td></tr>`;
+                        return;
+                    }
+
+                    if (dailyEntries.length === 0) {
+                        streamBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">No tracking entries logged for this specific target timeline horizon folder segment.</td></tr>`;
+                        return;
+                    }
+
+                    dailyEntries.forEach((log) => {
+                        let contextualSummary = "—";
+                        if (log.status === "Present") {
+                            contextualSummary = `Tardiness: ${log.metrics.lateMins || 0}m | OB: ${log.metrics.obMins || 0}m`;
+                        } else if (log.status === "Leave") {
+                            contextualSummary = `${log.metrics.leaveType} (${log.metrics.leaveDays}d)`;
+                        } else if (log.status === "Rest Day") {
+                            contextualSummary = "Off Day";
+                        }
+
+                        const badgeClass = log.status === "Rest Day" ? "restday" : log.status.toLowerCase();
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><span style="font-family: monospace;">${log.date}</span></td>
+                            <td><strong>${log.empName}</strong></td>
+                            <td><span class="badge-ui ${badgeClass}">${log.status}</span></td>
+                            <td><small>${contextualSummary}</small></td>
+                            <td><span style="color:var(--text-muted); font-size:0.75rem;">${log.remarks || "—"}</span></td>
+                        `;
+                        streamBody.appendChild(tr);
+                    });
+                }
+
+                function compileTrendMonitorMetrics() {
+                    const rawTargetDate = document.getElementById("record-date").value || new Date().toISOString().split('T')[0];
+                    const normalizedTargetDate = normalizeDateString(rawTargetDate);
+                    const validationMonthStr = normalizedTargetDate.slice(0, 7);
+
+                    const trendBody = document.getElementById("trend-monitor-table-body");
+                    trendBody.innerHTML = "";
+
+                    const monthlyRecords = database.filter((rec) => normalizeDateString(rec.date).startsWith(validationMonthStr));
+
+                    agentPoolList.forEach((agentName) => {
+                        const agentLogs = monthlyRecords.filter((rec) => rec.empName === agentName);
+                        let totalTardiness = 0, totalOverbreaks = 0, criticalLeaveDays = 0, unscheduledLeaveDays = 0;
+
+                        agentLogs.forEach((log) => {
+                            if (log.status === "Present" && log.metrics) {
+                                totalTardiness += log.metrics.lateMins || 0;
+                                totalOverbreaks += log.metrics.obMins || 0;
+                            } else if (log.status === "Leave" && log.metrics) {
+                                const type = log.metrics.leaveType || "";
+                                const days = log.metrics.leaveDays || 1;
+                                if (type === "Vacation leave" || type === "Sick leave") criticalLeaveDays += days;
+                                else if (type === "VL+ (non-emergency)" || type === "SL+ (health/emergency)") unscheduledLeaveDays += days;
+                            } else if (log.status === "Absent") {
+                                unscheduledLeaveDays += 1;
+                            }
+                        });
+
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td><strong>${agentName}</strong></td>
+                            <td>Tardiness: ${totalTardiness}m | OB: ${totalOverbreaks}m</td>
+                            <td><span class="badge-ui ${totalTardiness + totalOverbreaks > 15 ? "absent" : "present"}">${agentLogs.filter((l) => l.status === "Present" && ((l.metrics?.lateMins || 0) > 0 || (l.metrics?.obMins || 0) > 0)).length} Incident(s)</span></td>
+                            <td>${criticalLeaveDays} Day(s)</td>
+                            <td><span style="color: ${unscheduledLeaveDays >= 2 ? "var(--danger)" : "inherit"}; font-weight: ${unscheduledLeaveDays >= 2 ? "700" : "500"}">${unscheduledLeaveDays} Day(s)</span></td>
+                        `;
+                        trendBody.appendChild(row);
+                    });
+                }
+
+                function compileComplianceNotifier() {
+                    const rawTargetDate = document.getElementById("record-date").value || new Date().toISOString().split('T')[0];
+                    const normalizedTargetDate = normalizeDateString(rawTargetDate);
+                    const validationMonthStr = normalizedTargetDate.slice(0, 7);
+
+                    const complianceBody = document.getElementById("compliance-notifier-table-body");
+                    complianceBody.innerHTML = "";
+
+                    const monthlyRecords = database.filter((rec) => normalizeDateString(rec.date).startsWith(validationMonthStr));
+
+                    agentPoolList.forEach((agentName) => {
+                        const agentLogs = monthlyRecords.filter((rec) => rec.empName === agentName);
+                        let lostMinutesTotal = 0, timingInfractionCount = 0, combinedAbsenceDays = 0;
+
+                        agentLogs.forEach((log) => {
+                            if (log.status === "Present" && log.metrics) {
+                                const l = log.metrics.lateMins || 0, o = log.metrics.obMins || 0;
+                                if (l > 0 || o > 0) { lostMinutesTotal += (l + o); timingInfractionCount++; }
+                            } else if (log.status === "Absent") {
+                                combinedAbsenceDays++;
+                            } else if (log.status === "Leave" && log.metrics) {
+                                if (log.metrics.leaveType === "VL+ (non-emergency)" || log.metrics.leaveType === "SL+ (health/emergency)") combinedAbsenceDays += (log.metrics.leaveDays || 1);
+                            }
+                        });
+
+                        const isExcessiveTimeLapse = timingInfractionCount >= 3 || lostMinutesTotal > 15;
+                        const isExcessiveAbsence = combinedAbsenceDays >= 2;
+
+                        let timeLabel = `<span style="color:var(--success); font-weight:500;"><i class="fa fa-check-circle"></i> Compliant (${lostMinutesTotal}m)</span>`;
+                        if (isExcessiveTimeLapse) timeLabel = `<span style="color:var(--danger); font-weight:700;"><i class="fa fa-exclamation-triangle"></i> Excessive Loss (${lostMinutesTotal}m)</span>`;
+
+                        let absenceLabel = `<span style="color:var(--success); font-weight:500;"><i class="fa fa-check-circle"></i> Standard (${combinedAbsenceDays}d)</span>`;
+                        if (isExcessiveAbsence) absenceLabel = `<span style="color:var(--danger); font-weight:700;"><i class="fa fa-radiation"></i> Critical (${combinedAbsenceDays}d)</span>`;
+
+                        let actionLabel = `<span class="badge-ui present">No Action Required</span>`;
+                        if (isExcessiveTimeLapse || isExcessiveAbsence) actionLabel = `<span class="badge-ui absent"><i class="fa fa-gavel"></i> Issue Draft NTE Notification</span>`;
+
+                        const row = document.createElement("tr");
+                        row.innerHTML = `<td>${agentName}</td><td>${timeLabel}</td><td>${absenceLabel}</td><td>${actionLabel}</td>`;
+                        complianceBody.appendChild(row);
+                    });
+                }
+
+                function renderMasterLedgerTable() {
+                    const masterBody = document.getElementById("master-modal-table-body");
+                    masterBody.innerHTML = "";
+
+                    if (database.length === 0) {
+                        masterBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">Network database ledger lines appear empty or sync is pending.</td></tr>`;
+                        return;
+                    }
+
+                    const sortedLogCollection = [...database].sort((x, y) => new Date(normalizeDateString(y.date)) - new Date(normalizeDateString(x.date)));
+
+                    sortedLogCollection.forEach((log) => {
+                        let metricString = "";
+                        if (log.status === "Present") metricString = `Tardiness: ${log.metrics.lateMins || 0}m, OB: ${log.metrics.obMins || 0}m`;
+                        else if (log.status === "Leave") metricString = `${log.metrics.leaveType} [${log.metrics.leaveDays} Day(s)]`;
+                        else if (log.status === "Rest Day") metricString = "Off Day";
+                        else if (log.status === "Absent") metricString = "LWOP Active";
+
+                        const badgeClassName = log.status === "Rest Day" ? "restday" : log.status.toLowerCase();
+                        const row = document.createElement("tr");
+
+                        row.setAttribute("data-agent", log.empName.toLowerCase());
+                        row.setAttribute("data-status", log.status.toLowerCase());
+                        row.setAttribute("data-date", log.date.toLowerCase());
+                        row.setAttribute("data-metrics", metricString.toLowerCase());
+                        row.setAttribute("data-remarks", (log.remarks || "").toLowerCase());
+
+                        row.innerHTML = `
+                            <td><span style="font-family: monospace;">${log.date}</span></td>
+                            <td><strong>${log.empName}</strong></td>
+                            <td><span class="badge-ui ${badgeClassName}">${log.status}</span></td>
+                            <td><small>${metricString}</small></td>
+                            <td><span style="font-size:0.75rem; color:var(--text-muted);">${log.remarks || "—"}</span></td>
+                        `;
+                        masterBody.appendChild(row);
+                    });
+
+                    filterMasterLedgerGrid();
+                }
+
+                // Excel-Like Search Bar Filtering Matrix Routine Function
+                window.filterMasterLedgerGrid = function() {
+                    const searchInput = document.getElementById("master-excel-search");
+                    if (!searchInput) return;
+
+                    const term = searchInput.value.trim().toLowerCase();
+                    const masterBody = document.getElementById("master-modal-table-body");
+                    const rows = masterBody.getElementsByTagName("tr");
+
+                    if (rows.length === 1 && rows[0].cells.length === 1) return;
+
+                    for (let i = 0; i < rows.length; i++) {
+                        const targetRow = rows[i];
+                        if (
+                            (targetRow.getAttribute("data-agent") || "").includes(term) ||
+                            (targetRow.getAttribute("data-status") || "").includes(term) ||
+                            (targetRow.getAttribute("data-date") || "").includes(term) ||
+                            (targetRow.getAttribute("data-metrics") || "").includes(term) ||
+                            (targetRow.getAttribute("data-remarks") || "").includes(term)
+                        ) {
+                            targetRow.style.display = "";
+                        } else {
+                            targetRow.style.display = "none";
+                        }
+                    }
+                };
+            })();
+        </script>
+    </body>
+</html>
